@@ -10,6 +10,7 @@
 
     <style name="AlertDialogTheme" parent="Base.ThemeOverlay.AppCompat.Dialog">
         <item name="android:background">@color/colorPrimary</item>
+        <!--<item name="android:colorAccent">@color/colorPrimaryDark</item>     &lt;!&ndash; PositiveButton Color &ndash;&gt;-->
     </style>
 
 </resources>

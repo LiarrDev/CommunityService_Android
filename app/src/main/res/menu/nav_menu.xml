@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group>
+        <item
+            android:id="@+id/nav_me"
+            android:icon="@drawable/ic_me"
+            android:title="Me" />
+        <item
+            android:id="@+id/location"
+            android:icon="@drawable/ic_location"
+            android:title="Location" />
+        <item
+            android:id="@+id/event"
+            android:icon="@drawable/ic_event"
+            android:title="Event" />
+        <item
+            android:id="@+id/sign_out"
+            android:icon="@drawable/ic_sign_out"
+            android:title="Sign Out" />
+        <item
+            android:id="@+id/about"
+            android:icon="@drawable/ic_about"
+            android:title="About" />
+    </group>
+</menu>
