@@ -97,7 +97,7 @@ public class SignUpActivity extends AppCompatActivity {
                 Response response = client.newCall(request).execute();
                 String responseContent = response.body().string();
                 LogUtil.e("==SignUpJSON==", responseContent);
-                AlertDialogUtil.showSignUpResponseDialog(this, ParseJsonUtil.parseSignUpOrSignInCodeJson(responseContent));
+                runOnUiThread(() -> AlertDialogUtil.showSignUpResponseDialog(SignUpActivity.this, ParseJsonUtil.parseSignUpOrSignInCodeJson(responseContent)));
             } catch (Exception e) {
                 e.printStackTrace();
             }

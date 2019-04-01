@@ -3,7 +3,6 @@ package com.liarr.communityservice.Util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Looper;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,8 +58,6 @@ public class AlertDialogUtil {
      * @param responseCode 服务器响应的 Code
      */
     public static void showSignUpResponseDialog(Context context, String responseCode) {
-        Looper.prepare();
-        LogUtil.e("===INSIDERESPONSEDIALOG==", "INSIDE");
         dismissProgressDialog();
         AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
         dialog.setTitle(R.string.app_name).setCancelable(false);
@@ -77,7 +74,6 @@ public class AlertDialogUtil {
             dialog.setMessage("Sign Up Failed. Please Try Again.").setPositiveButton("OK", null);
         }
         dialog.show();
-        Looper.loop();
     }
 
     /**
