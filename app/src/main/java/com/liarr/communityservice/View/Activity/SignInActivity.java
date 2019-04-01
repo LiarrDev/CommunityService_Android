@@ -2,19 +2,19 @@ package com.liarr.communityservice.View.Activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.text.Html;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.liarr.communityservice.R;
+import com.liarr.communityservice.Util.AlertDialogUtil;
 import com.liarr.communityservice.Util.HttpRequestUrlUtil;
 import com.liarr.communityservice.Util.InputMatcherUtil;
 import com.liarr.communityservice.Util.LogUtil;
+import com.liarr.communityservice.Util.NetworkTestUtil;
 import com.liarr.communityservice.Util.ParseJsonUtil;
 
 import okhttp3.FormBody;
@@ -68,7 +68,7 @@ public class SignInActivity extends AppCompatActivity {
             if (!InputMatcherUtil.isTel(tel) || !InputMatcherUtil.isPassword(password)) {
                 LogUtil.i("==SignInTel==", tel);
                 LogUtil.i("==SignInPassword==", password);
-                showInputErrorAlert();
+                AlertDialogUtil.showSignInItemInputErrorDialog(this);
             } else {
                 submitSignInForm(tel, password);
             }
@@ -77,11 +77,19 @@ public class SignInActivity extends AppCompatActivity {
 
     /**
      * 向服务器提交用户填写的信息
-     * @param tel 手机号码
+     *
+     * @param tel      手机号码
      * @param password 密码
      */
     private void submitSignInForm(final String tel, final String password) {
+
+        AlertDialogUtil.showProgressDialog(this);
+
         new Thread(() -> {
+            if (!NetworkTestUtil.isNetworkAvailable(this)) {
+                NetworkTestUtil.showNetworkDisableToast(this);
+            }
+
             try {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new FormBody.Builder()
@@ -96,8 +104,7 @@ public class SignInActivity extends AppCompatActivity {
                 String responseContent = response.body().string();
                 LogUtil.e("==SignInJSON==", responseContent);
 
-                if (ParseJsonUtil.parseSignUpOrSignInStateJson(responseContent)) {      // Msg 为 success，登录成功
-
+                if (ParseJsonUtil.parseSignUpOrSignInCodeJson(responseContent).equals("0")) {       // Code 为 0，服务器响应登录成功
                     // 解析得到 uid 并存储
                     userId = ParseJsonUtil.parseUserIdJson(responseContent);
                     LogUtil.e("===UserID===", userId + "");
@@ -109,28 +116,23 @@ public class SignInActivity extends AppCompatActivity {
                     editor.putInt("userId", userId);
                     editor.apply();
 
+                    runOnUiThread(AlertDialogUtil::dismissProgressDialog);      // 隐藏 ProgressBar
+
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.putExtra("userId", userId);
                     startActivity(intent);
                     finish();
-                } else {
-                    // TODO: 登录失败
+                } else if (ParseJsonUtil.parseSignUpOrSignInCodeJson(responseContent).equals("1")) {    // Code 为 1，服务器响应登录失败
+                    LogUtil.e("==SignInCode==", "1");
+                    runOnUiThread(() -> {
+                        AlertDialogUtil.showSignInItemInputErrorDialog(this);
+                        AlertDialogUtil.dismissProgressDialog();        // 隐藏 ProgressBar
+                    });
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
-    }
-
-    /**
-     * 输入 Tel 或 Password 错误弹出提示框
-     */
-    private void showInputErrorAlert() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.app_name)
-                .setMessage("Your Tel or Password must be wrong. Please check again.")
-                .setCancelable(false)
-                .setPositiveButton("OK", null)
-                .show();
     }
 }

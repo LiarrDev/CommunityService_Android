@@ -5,25 +5,28 @@ import org.json.JSONObject;
 public class ParseJsonUtil {
 
     /**
-     * 解析注册或登陆返回的 JSON，并将其状态转为 Boolean 值
+     * 解析注册或登陆返回的 JSON，并返回对应的 Code
+     *
      * @param json 注册或登陆返回的 JSON 字符串
-     * @return 注册或登陆成功为 TRUE，注册或登陆失败为 FALSE
+     * @return 注册或登陆的状态 Code
      */
-    public static boolean parseSignUpOrSignInStateJson(String json) {
-        boolean state = false;
+    public static String parseSignUpOrSignInCodeJson(String json) {
+        String code = null;
         try {
             JSONObject jsonObject = new JSONObject(json);
-            String msg = jsonObject.getString("msg");
-            LogUtil.e("===SignUpOrSignInMsg===", msg);
-            if (msg.equals("success")) {
-                state = true;
-            }
+            code = jsonObject.getString("code");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return state;
+        return code;
     }
 
+    /**
+     * 解析登录返回的 JSON 获取用户的 UID
+     *
+     * @param json 登录返回的 JSON
+     * @return 用户的 UID
+     */
     public static int parseUserIdJson(String json) {
         int uid = 0;
         try {
@@ -32,7 +35,6 @@ public class ParseJsonUtil {
             LogUtil.e("===SignUpOrSignInUser===", user);
             JSONObject userJsonObject = new JSONObject(user);
             uid = userJsonObject.getInt("uid");
-
         } catch (Exception e) {
             e.printStackTrace();
         }

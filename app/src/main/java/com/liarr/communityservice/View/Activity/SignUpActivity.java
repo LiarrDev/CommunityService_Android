@@ -1,20 +1,19 @@
 package com.liarr.communityservice.View.Activity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.text.Html;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.liarr.communityservice.R;
+import com.liarr.communityservice.Util.AlertDialogUtil;
 import com.liarr.communityservice.Util.HttpRequestUrlUtil;
 import com.liarr.communityservice.Util.InputMatcherUtil;
 import com.liarr.communityservice.Util.LogUtil;
+import com.liarr.communityservice.Util.NetworkTestUtil;
 import com.liarr.communityservice.Util.ParseJsonUtil;
 
 import okhttp3.FormBody;
@@ -58,19 +57,32 @@ public class SignUpActivity extends AppCompatActivity {
             password = passwordEdit.getText().toString();
 
             if (!InputMatcherUtil.isName(name)) {
-                showInputErrorAlert("Name");
+                AlertDialogUtil.showSignUpItemInputErrorDialog(this, "Name");
             } else if (!InputMatcherUtil.isTel(tel)) {
-                showInputErrorAlert("Tel");
+                AlertDialogUtil.showSignUpItemInputErrorDialog(this, "Tel");
             } else if (!InputMatcherUtil.isPassword(password)) {
-                showInputErrorAlert("Password");
+                AlertDialogUtil.showSignUpItemInputErrorDialog(this, "Password");
             } else {
                 submitSignUpForm(name, tel, password);
             }
         });
     }
 
+    /**
+     * 提交注册的表单
+     *
+     * @param name     用户名字
+     * @param tel      手机号码
+     * @param password 密码
+     */
     private void submitSignUpForm(String name, String tel, String password) {
+
+        AlertDialogUtil.showProgressDialog(this);
+
         new Thread(() -> {
+            if (!NetworkTestUtil.isNetworkAvailable(this)) {        // 网络异常，弹出提示
+                NetworkTestUtil.showNetworkDisableToast(this);
+            }
             try {
                 OkHttpClient client = new OkHttpClient();
                 RequestBody requestBody = new FormBody.Builder()
@@ -85,37 +97,10 @@ public class SignUpActivity extends AppCompatActivity {
                 Response response = client.newCall(request).execute();
                 String responseContent = response.body().string();
                 LogUtil.e("==SignUpJSON==", responseContent);
-
-                if (ParseJsonUtil.parseSignUpOrSignInStateJson(responseContent)) {      // Msg 为 success，注册成功
-                    runOnUiThread(this::showSignInSucceedAlert);
-                } else {
-                    // TODO: 登陆失败弹出对应对话框，可以复用成功的对话框
-                }
+                AlertDialogUtil.showSignUpResponseDialog(this, ParseJsonUtil.parseSignUpOrSignInCodeJson(responseContent));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
-    }
-
-    private void showSignInSucceedAlert() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.app_name)
-                .setMessage("Sign Up Succeed. Please Sign In.")
-                .setCancelable(false)
-                .setPositiveButton("OK", (signInDialog, which) -> {
-                    Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
-                    startActivity(intent);
-                    finish();
-                })
-                .show();
-    }
-
-    private void showInputErrorAlert(String item) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(R.string.app_name)
-                .setMessage("It seems not like a right " + item + ". Please check again.")
-                .setCancelable(false)
-                .setPositiveButton("OK", null)
-                .show();
     }
 }
