@@ -41,14 +41,17 @@ public class SignInActivity extends AppCompatActivity {
 
         // 查取登录信息自动登录
         SharedPreferences preferences = getSharedPreferences("defaultUser", MODE_PRIVATE);
-        String prefUserTel = preferences.getString("tel", "");
-        String prefUserPassword = preferences.getString("password", "");
-        if (prefUserTel == null || prefUserTel.equals("")) {
+        int prefUserId = preferences.getInt("userId", -1);
+        LogUtil.e("===SignInAutoUid==", prefUserId + "");
+        if (prefUserId == -1) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.clear();
             editor.apply();
         } else {
-            submitSignInForm(prefUserTel, prefUserPassword);        // 用保存的登录信息进行登录
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("userId", prefUserId);
+            startActivity(intent);
+            finish();
         }
 
         signUpLink = (TextView) findViewById(R.id.sign_up_link);

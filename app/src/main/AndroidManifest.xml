@@ -13,7 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".View.Activity.SignUpActivity"></activity>
+        <activity android:name=".View.Activity.AboutActivity"></activity>
+        <activity android:name=".View.Activity.SignUpActivity" />
         <activity android:name=".View.Activity.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
