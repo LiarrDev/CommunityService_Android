@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<litepal>
+
+    <dbname value="community_service" />
+
+    <version value="2" />
+
+    <list>
+        <mapping class="com.liarr.communityservice.Database.Province" />
+        <mapping class="com.liarr.communityservice.Database.City" />
+        <mapping class="com.liarr.communityservice.Database.County" />
+    </list>
+</litepal>

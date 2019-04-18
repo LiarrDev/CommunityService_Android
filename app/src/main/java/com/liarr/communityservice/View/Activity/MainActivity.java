@@ -9,9 +9,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.liarr.communityservice.R;
@@ -33,6 +35,13 @@ public class MainActivity extends AppCompatActivity {
     TextView nameNav;
     TextView coinText;
 
+    LinearLayout channelNursing;
+    LinearLayout channelLegwork;
+    LinearLayout channelCleaning;
+    LinearLayout channelEducation;
+    LinearLayout channelRepast;
+    LinearLayout channelRepair;
+
     ImageView star1, star2, star3, star4, star5;
 
     int userId;
@@ -46,9 +55,13 @@ public class MainActivity extends AppCompatActivity {
         userId = intent.getIntExtra("userId", -1);
         LogUtil.e("==MainGetIntentBundle==", userId + "");
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         initMainView();
         initDrawer();
-
     }
 
     /**
@@ -62,6 +75,24 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_user);
         }
+
+        channelNursing = (LinearLayout) findViewById(R.id.channel_nursing);
+        channelNursing.setOnClickListener(v -> openChannel("医护"));
+
+        channelLegwork = (LinearLayout) findViewById(R.id.channel_legwork);
+        channelLegwork.setOnClickListener(v -> openChannel("跑腿"));
+
+        channelCleaning = (LinearLayout) findViewById(R.id.channel_cleaning);
+        channelCleaning.setOnClickListener(v -> openChannel("清洁"));
+
+        channelEducation = (LinearLayout) findViewById(R.id.channel_education);
+        channelEducation.setOnClickListener(v -> openChannel("教育"));
+
+        channelRepast = (LinearLayout) findViewById(R.id.channel_repast);
+        channelRepast.setOnClickListener(v -> openChannel("餐饮"));
+
+        channelRepair = (LinearLayout) findViewById(R.id.channel_repair);
+        channelRepair.setOnClickListener(v -> openChannel("维修"));
     }
 
     /**
@@ -81,19 +112,28 @@ public class MainActivity extends AppCompatActivity {
         updateUserInfo();
         getUserInfo(userId);
 
+        // 从 SharedPreference 中取出 Location
+        SharedPreferences preferences = getSharedPreferences("defaultUser", MODE_PRIVATE);
+        String prefLocation = preferences.getString("location", "");
+        if (!TextUtils.isEmpty(prefLocation.trim())) {
+            navigationView.getMenu().getItem(1).setTitle(prefLocation);
+        }
+
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.nav_me:
                     break;
 
                 case R.id.nav_location:
+                    Intent locationIntent = new Intent(this, LocationActivity.class);
+                    startActivity(locationIntent);
                     break;
 
                 case R.id.nav_event:
                     break;
 
                 case R.id.nav_sign_out:
-                    Intent signOutIntent = new Intent(MainActivity.this, SignInActivity.class);
+                    Intent signOutIntent = new Intent(this, SignInActivity.class);
                     SharedPreferences.Editor editor = getSharedPreferences("defaultUser", MODE_PRIVATE).edit();
                     editor.clear();
                     editor.apply();
@@ -187,7 +227,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Menu 管理
+     * 打开对应频道查看 Event
+     *
+     * @param channelName 频道名称
+     */
+    private void openChannel(String channelName) {
+        // 从 SharedPreference 中取出 Location
+        SharedPreferences preferences = getSharedPreferences("defaultUser", MODE_PRIVATE);
+        String prefLocation = preferences.getString("location", "");
+
+        Intent intent = new Intent(this, EventListActivity.class);
+        intent.putExtra("channel", channelName);
+        intent.putExtra("location", prefLocation);
+        startActivity(intent);
+    }
+
+    /**
+     * Menu 选择管理
      *
      * @param item Menu Item
      * @return SUPER

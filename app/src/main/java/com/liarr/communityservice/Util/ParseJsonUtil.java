@@ -2,7 +2,13 @@ package com.liarr.communityservice.Util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
+import com.liarr.communityservice.Database.City;
+import com.liarr.communityservice.Database.County;
+import com.liarr.communityservice.Database.Province;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -49,7 +55,7 @@ public class ParseJsonUtil {
     /**
      * 解析获取用户信息返回的 JSON 并把相应的内容存到 SharedPreferences 中
      *
-     * @param json 获取用户信息返回到 JSON
+     * @param json 获取用户信息返回的 JSON
      */
     public static void parseUserInfoJson(Context context, String json) {
         try {
@@ -72,5 +78,83 @@ public class ParseJsonUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 解析和处理服务器返回的省级数据
+     *
+     * @param json 请求地区返回的 JSON
+     * @return 处理成功或失败
+     */
+    public static boolean handleProvinceJson(String json) {
+        if (!TextUtils.isEmpty(json)) {
+            try {
+                JSONArray allProvinces = new JSONArray(json);
+                for (int i = 0; i < allProvinces.length(); i++) {
+                    JSONObject provinceObject = allProvinces.getJSONObject(i);
+                    Province province = new Province();
+                    province.setProvinceName(provinceObject.getString("name"));
+                    province.setProvinceCode(provinceObject.getInt("id"));
+                    province.save();
+                }
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 解析和处理服务器返回的市级数据
+     *
+     * @param json       请求地区返回的 JSON
+     * @param provinceId 省 ID
+     * @return 处理成功或失败
+     */
+    public static boolean handleCityJson(String json, int provinceId) {
+        if (!TextUtils.isEmpty(json)) {
+            try {
+                JSONArray allCities = new JSONArray(json);
+                for (int i = 0; i < allCities.length(); i++) {
+                    JSONObject cityObject = allCities.getJSONObject(i);
+                    City city = new City();
+                    city.setCityName(cityObject.getString("name"));
+                    city.setCityCode(cityObject.getInt("id"));
+                    city.setProvinceId(provinceId);
+                    city.save();
+                }
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 解析和处理服务器返回的县级数据
+     *
+     * @param json   请求地区返回的 JSON
+     * @param cityId 市 ID
+     * @return 处理成功或失败
+     */
+    public static boolean handleCountyJson(String json, int cityId) {
+        if (!TextUtils.isEmpty(json)) {
+            try {
+                JSONArray allCounties = new JSONArray(json);
+                for (int i = 0; i < allCounties.length(); i++) {
+                    JSONObject countyObject = allCounties.getJSONObject(i);
+                    County county = new County();
+                    county.setCountyName(countyObject.getString("name"));
+                    county.setCityId(cityId);
+                    county.save();
+                }
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
     }
 }

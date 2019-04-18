@@ -43,6 +43,7 @@
 
                         <!-- 医护 -->
                         <LinearLayout
+                            android:id="@+id/channel_nursing"
                             android:padding="12dp"
                             android:orientation="vertical"
                             android:gravity="center_horizontal"
@@ -61,6 +62,7 @@
 
                         <!-- 跑腿 -->
                         <LinearLayout
+                            android:id="@+id/channel_legwork"
                             android:padding="12dp"
                             android:orientation="vertical"
                             android:gravity="center_horizontal"
@@ -79,6 +81,7 @@
 
                         <!-- 清洁 -->
                         <LinearLayout
+                            android:id="@+id/channel_cleaning"
                             android:padding="12dp"
                             android:orientation="vertical"
                             android:gravity="center_horizontal"
@@ -97,6 +100,7 @@
 
                         <!-- 教育 -->
                         <LinearLayout
+                            android:id="@+id/channel_education"
                             android:padding="12dp"
                             android:orientation="vertical"
                             android:gravity="center_horizontal"
@@ -115,6 +119,7 @@
 
                         <!-- 餐饮 -->
                         <LinearLayout
+                            android:id="@+id/channel_repast"
                             android:padding="12dp"
                             android:orientation="vertical"
                             android:gravity="center_horizontal"
@@ -133,6 +138,7 @@
 
                         <!-- 维修 -->
                         <LinearLayout
+                            android:id="@+id/channel_repair"
                             android:padding="12dp"
                             android:orientation="vertical"
                             android:gravity="center_horizontal"
