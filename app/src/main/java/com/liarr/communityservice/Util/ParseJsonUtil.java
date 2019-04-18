@@ -6,10 +6,14 @@ import android.text.TextUtils;
 
 import com.liarr.communityservice.Database.City;
 import com.liarr.communityservice.Database.County;
+import com.liarr.communityservice.Database.Event;
 import com.liarr.communityservice.Database.Province;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -156,5 +160,49 @@ public class ParseJsonUtil {
             }
         }
         return false;
+    }
+
+    /**
+     * 解析服务器返回但 Event List 并解析提取简要数据存在 List 中并返回给调用函数
+     *
+     * @param json 服务器查询 Event 返回的 JSON
+     * @return 简要数据的 List
+     */
+    public static List<Event> parseEventListJson(String json) {
+        List<Event> eventList = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            String eventListJson = jsonObject.getString("eventlist");
+            LogUtil.e("==EventListJson==", eventListJson);
+            JSONArray eventListJsonArray = new JSONArray(eventListJson);
+
+            int eid;
+            String eventName;
+            String category;
+            String eventTime;
+            String city;
+            String county;
+            int coin;
+
+            for (int i = 0; i < eventListJsonArray.length(); i++) {
+                JSONObject eventListObject = eventListJsonArray.getJSONObject(i);
+                LogUtil.e("==EventListObject_" + i + "==", eventListObject.toString());
+                LogUtil.e("==EventListObject_" + i + "_EventName==", eventListObject.getString("eventName"));
+
+                eid = eventListObject.getInt("eid");
+                eventName = eventListObject.getString("eventName");
+                category = eventListObject.getString("category");
+                eventTime = eventListObject.getString("eventTime");
+                city = eventListObject.getString("city");
+                county = eventListObject.getString("district");
+                coin = eventListObject.getInt("coin");
+
+                Event event = new Event(eid, eventName, category, eventTime, city, county, coin);
+                eventList.add(event);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return eventList;
     }
 }

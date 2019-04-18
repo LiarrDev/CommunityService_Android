@@ -44,6 +44,9 @@ public class ChooseAreaFragment extends Fragment {
     private static final int LEVEL_CITY = 1;
     private static final int LEVEL_COUNTY = 2;
 
+    public static final String SETTING_GLOBAL_LOCATION = "setting_global_location";
+    public static final String SETTING_ADD_EVENT_LOCATION = "setting_add_event_location";
+
     private TextView titleText;
     private Button backButton;
     private ListView listView;
@@ -79,20 +82,30 @@ public class ChooseAreaFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        // 获取 Activity 中通过 Intent 传过来的 Action
+        String action = getActivity().getIntent().getStringExtra("action");
+        LogUtil.e("==FragmentAction==", action);
+
         listView.setOnItemClickListener((parent, view, position, id) -> {
             if (currentLevel == LEVEL_PROVINCE) {
                 selectedProvince = provinceList.get(position);
                 queryCities();
             } else if (currentLevel == LEVEL_CITY) {
                 selectedCity = cityList.get(position);
-//                queryCounties();
 //                Toast.makeText(getContext(), selectedCity.getCityName() + " Clicked.", Toast.LENGTH_LONG).show();
 
-                // 用 SharedPreferences 保存选中的位置
-                SharedPreferences.Editor editor = Objects.requireNonNull(getContext()).getSharedPreferences("defaultUser", MODE_PRIVATE).edit();
-                editor.putString("location", selectedCity.getCityName());
-                editor.apply();
-                Objects.requireNonNull(getActivity()).finish();
+                if (action.equals(SETTING_GLOBAL_LOCATION)) {       // 如果是在 Drawer 中进来就只查询到市并保存
+                    LogUtil.e("==DrawerAction==", "INSIDE");
+                    // 用 SharedPreferences 保存选中的位置
+                    SharedPreferences.Editor editor = Objects.requireNonNull(getContext()).getSharedPreferences("defaultUser", MODE_PRIVATE).edit();
+                    editor.putString("location", selectedCity.getCityName());
+                    editor.apply();
+                    Objects.requireNonNull(getActivity()).finish();
+                } else if (action.equals(SETTING_ADD_EVENT_LOCATION)) {     // 如果是在添加 Event 中进来就查询到县并回传到 Activity 中
+                    // TODO: 获取省市县到值并回传
+                    queryCounties();
+                }
             }
         });
         backButton.setOnClickListener(v -> {
@@ -100,8 +113,8 @@ public class ChooseAreaFragment extends Fragment {
                 Objects.requireNonNull(getActivity()).finish();
             } else if (currentLevel == LEVEL_CITY) {
                 queryProvinces();
-//            } else if (currentLevel == LEVEL_COUNTY) {
-//                queryCities();
+            } else if (currentLevel == LEVEL_COUNTY) {
+                queryCities();
             }
         });
         queryProvinces();
@@ -176,7 +189,7 @@ public class ChooseAreaFragment extends Fragment {
     }
 
     /**
-     * 根据传入的地址和类型从服务器上查询省市数据
+     * 根据传入的地址和类型从服务器上查询省市县数据
      *
      * @param url  查询的地址
      * @param type 查询的类型
@@ -214,8 +227,8 @@ public class ChooseAreaFragment extends Fragment {
                             queryProvinces();
                         } else if (type.equals("city")) {
                             queryCities();
-//                        } else if (type.equals("county")) {
-//                            queryCounties();
+                        } else if (type.equals("county")) {
+                            queryCounties();
                         }
                     });
                 }

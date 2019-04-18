@@ -8,6 +8,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -16,16 +18,25 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.liarr.communityservice.Database.Event;
 import com.liarr.communityservice.R;
+import com.liarr.communityservice.Util.EventStatusUtil;
 import com.liarr.communityservice.Util.HttpRequestUrlUtil;
 import com.liarr.communityservice.Util.LogUtil;
 import com.liarr.communityservice.Util.ParseJsonUtil;
+import com.liarr.communityservice.Util.QueryEventUtil;
+import com.liarr.communityservice.View.Adapter.EventItemAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.liarr.communityservice.View.Fragment.ChooseAreaFragment.SETTING_GLOBAL_LOCATION;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,9 +53,15 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout channelRepast;
     LinearLayout channelRepair;
 
+    RecyclerView recyclerView;
+
     ImageView star1, star2, star3, star4, star5;
 
     int userId;
+
+    private EventItemAdapter adapter;
+
+    private List<Event> eventList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +72,14 @@ public class MainActivity extends AppCompatActivity {
         userId = intent.getIntExtra("userId", -1);
         LogUtil.e("==MainGetIntentBundle==", userId + "");
 
+        initMainView();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        initMainView();
         initDrawer();
+        initEventList();
     }
 
     /**
@@ -93,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
         channelRepair = (LinearLayout) findViewById(R.id.channel_repair);
         channelRepair.setOnClickListener(v -> openChannel("维修"));
+
     }
 
     /**
@@ -126,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
                 case R.id.nav_location:
                     Intent locationIntent = new Intent(this, LocationActivity.class);
+                    locationIntent.putExtra("action", SETTING_GLOBAL_LOCATION);
                     startActivity(locationIntent);
                     break;
 
@@ -154,6 +174,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * 加载 Event List
+     */
+    private void initEventList() {
+
+        recyclerView = (RecyclerView) findViewById(R.id.main_recycler);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        new Thread(() -> {
+            // 从 SharedPreference 中取出 Location
+            SharedPreferences preferences = getSharedPreferences("defaultUser", MODE_PRIVATE);
+            String prefLocation = preferences.getString("location", "");
+            eventList = QueryEventUtil.queryUnacceptedEvent(prefLocation, EventStatusUtil.UNACCEPTED);
+            LogUtil.e("===EventListSize===", String.valueOf(eventList.size()));
+            runOnUiThread(() -> {
+                adapter = new EventItemAdapter(eventList);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+            });
+        }).start();
+    }
+
+    /**
      * 获取用户个人信息
      *
      * @param userId 用户的 uid
@@ -171,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
                         .url(HttpRequestUrlUtil.userInfoUrl)
                         .post(requestBody)
                         .build();
-                LogUtil.e("==getUserInfo==", HttpRequestUrlUtil.userInfoUrl);
                 Response response = client.newCall(request).execute();
                 String responseContent = response.body().string();
                 LogUtil.e("==UserInfo==", responseContent);
