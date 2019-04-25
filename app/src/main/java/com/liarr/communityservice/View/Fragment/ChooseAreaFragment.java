@@ -65,6 +65,8 @@ public class ChooseAreaFragment extends Fragment {
 
     private City selectedCity;                  // 选中的城市
 
+    private County selectedCounty;              // 选中的县
+
     private int currentLevel;                   // 当前选中的级别
 
     @Nullable
@@ -103,9 +105,19 @@ public class ChooseAreaFragment extends Fragment {
                     editor.apply();
                     Objects.requireNonNull(getActivity()).finish();
                 } else if (action.equals(SETTING_ADD_EVENT_LOCATION)) {     // 如果是在添加 Event 中进来就查询到县并回传到 Activity 中
-                    // TODO: 获取省市县到值并回传
                     queryCounties();
+
                 }
+            } else if (currentLevel == LEVEL_COUNTY) {
+                selectedCounty = countyList.get(position);
+                // 把选中的省市县存在 SharedPreference 中
+                SharedPreferences.Editor editor = Objects.requireNonNull(getContext()).getSharedPreferences("add_event_location", MODE_PRIVATE).edit();
+                editor.putString("province", selectedProvince.getProvinceName());
+                editor.putString("city", selectedCity.getCityName());
+                editor.putString("county", selectedCounty.getCountyName());
+                LogUtil.e("==AddEventLocation==", selectedProvince.getProvinceName() + " " + selectedCity.getCityName() + " " + selectedCounty.getCountyName());
+                editor.apply();
+                getActivity().finish();
             }
         });
         backButton.setOnClickListener(v -> {

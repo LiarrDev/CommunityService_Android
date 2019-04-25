@@ -3,6 +3,7 @@ package com.liarr.communityservice.View.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -20,7 +21,6 @@ import android.widget.TextView;
 
 import com.liarr.communityservice.Database.Event;
 import com.liarr.communityservice.R;
-import com.liarr.communityservice.Util.EventStatusUtil;
 import com.liarr.communityservice.Util.HttpRequestUrlUtil;
 import com.liarr.communityservice.Util.LogUtil;
 import com.liarr.communityservice.Util.ParseJsonUtil;
@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     TextView nameNav;
     TextView coinText;
+    FloatingActionButton registerFab;
 
     LinearLayout channelNursing;
     LinearLayout channelLegwork;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView star1, star2, star3, star4, star5;
 
     int userId;
+    String userName;
 
     private EventItemAdapter adapter;
 
@@ -86,48 +88,64 @@ public class MainActivity extends AppCompatActivity {
      * 初始化主视图
      */
     private void initMainView() {
-        toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_user);
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_me);
         }
 
-        channelNursing = (LinearLayout) findViewById(R.id.channel_nursing);
+        channelNursing = findViewById(R.id.channel_nursing);
         channelNursing.setOnClickListener(v -> openChannel("医护"));
 
-        channelLegwork = (LinearLayout) findViewById(R.id.channel_legwork);
+        channelLegwork = findViewById(R.id.channel_legwork);
         channelLegwork.setOnClickListener(v -> openChannel("跑腿"));
 
-        channelCleaning = (LinearLayout) findViewById(R.id.channel_cleaning);
+        channelCleaning = findViewById(R.id.channel_cleaning);
         channelCleaning.setOnClickListener(v -> openChannel("清洁"));
 
-        channelEducation = (LinearLayout) findViewById(R.id.channel_education);
+        channelEducation = findViewById(R.id.channel_education);
         channelEducation.setOnClickListener(v -> openChannel("教育"));
 
-        channelRepast = (LinearLayout) findViewById(R.id.channel_repast);
+        channelRepast = findViewById(R.id.channel_repast);
         channelRepast.setOnClickListener(v -> openChannel("餐饮"));
 
-        channelRepair = (LinearLayout) findViewById(R.id.channel_repair);
+        channelRepair = findViewById(R.id.channel_repair);
         channelRepair.setOnClickListener(v -> openChannel("维修"));
 
+        registerFab = findViewById(R.id.add_fab);
+        registerFab.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, RegisterEventActivity.class);
+            intent.putExtra("userName", userName);
+            intent.putExtra("userId", userId);
+            startActivity(intent);
+        });
+
+
+        recyclerView = findViewById(R.id.main_recycler);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+
+        // TODO: 把星星换成 RatingBar
+        drawerLayout = findViewById(R.id.main_drawer);
+        navigationView = findViewById(R.id.drawer_nav);
+        View headerView = navigationView.getHeaderView(0);
+        nameNav = headerView.findViewById(R.id.header_name);
+        coinText = headerView.findViewById(R.id.coin_text);
+        star1 = headerView.findViewById(R.id.star_1);
+        star2 = headerView.findViewById(R.id.star_2);
+        star3 = headerView.findViewById(R.id.star_3);
+        star4 = headerView.findViewById(R.id.star_4);
+        star5 = headerView.findViewById(R.id.star_5);
     }
 
     /**
      * 初始化侧滑菜单栏
      */
     private void initDrawer() {
-        drawerLayout = (DrawerLayout) findViewById(R.id.main_drawer);
-        navigationView = (NavigationView) findViewById(R.id.drawer_nav);
-        View headerView = navigationView.getHeaderView(0);
-        nameNav = (TextView) headerView.findViewById(R.id.header_name);
-        coinText = (TextView) headerView.findViewById(R.id.coin_text);
-        star1 = (ImageView) headerView.findViewById(R.id.star_1);
-        star2 = (ImageView) headerView.findViewById(R.id.star_2);
-        star3 = (ImageView) headerView.findViewById(R.id.star_3);
-        star4 = (ImageView) headerView.findViewById(R.id.star_4);
-        star5 = (ImageView) headerView.findViewById(R.id.star_5);
+
         updateUserInfo();
         getUserInfo(userId);
 
@@ -141,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(menuItem -> {
             switch (menuItem.getItemId()) {
                 case R.id.nav_me:
+                    Intent meIntent = new Intent(this, MeActivity.class);
+                    startActivity(meIntent);
                     break;
 
                 case R.id.nav_location:
@@ -177,17 +197,11 @@ public class MainActivity extends AppCompatActivity {
      * 加载 Event List
      */
     private void initEventList() {
-
-        recyclerView = (RecyclerView) findViewById(R.id.main_recycler);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-
         new Thread(() -> {
             // 从 SharedPreference 中取出 Location
             SharedPreferences preferences = getSharedPreferences("defaultUser", MODE_PRIVATE);
             String prefLocation = preferences.getString("location", "");
-            eventList = QueryEventUtil.queryUnacceptedEvent(prefLocation, EventStatusUtil.UNACCEPTED);
-            LogUtil.e("===EventListSize===", String.valueOf(eventList.size()));
+            eventList = QueryEventUtil.queryUnacceptedEvent(userId, prefLocation);
             runOnUiThread(() -> {
                 adapter = new EventItemAdapter(eventList);
                 recyclerView.setAdapter(adapter);
@@ -229,9 +243,9 @@ public class MainActivity extends AppCompatActivity {
      * 更新用户个人信息显示
      */
     private void updateUserInfo() {
-        // 为了在无网络情况下也可以正常显示用户信息所以需要初始化的时候从SharePre中调用该函数
+        // 为了在无网络情况下也可以正常显示用户信息所以需要初始化的时候从 SharePreference 中调用该函数
         SharedPreferences preferences = getSharedPreferences("defaultUser", MODE_PRIVATE);
-        String userName = preferences.getString("userName", "");
+        userName = preferences.getString("userName", "");
         int coin = preferences.getInt("coin", 0);
         float point = preferences.getFloat("point", 0);
         nameNav.setText(userName);
@@ -281,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EventListActivity.class);
         intent.putExtra("channel", channelName);
         intent.putExtra("location", prefLocation);
+        intent.putExtra("userId", userId);
         startActivity(intent);
     }
 

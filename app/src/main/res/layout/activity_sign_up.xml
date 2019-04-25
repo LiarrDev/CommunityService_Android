@@ -64,7 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPassword"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionGo"
                 android:hint="Password" />
         </android.support.design.widget.TextInputLayout>
 

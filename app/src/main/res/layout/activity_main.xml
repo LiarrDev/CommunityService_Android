@@ -160,7 +160,7 @@
                         android:id="@+id/main_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="12dp" />
+                        android:layout_marginTop="12dp" />
                 </LinearLayout>
             </ScrollView>
 
@@ -182,6 +182,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/nav_menu" />
+        app:menu="@menu/drawer_nav_menu" />
 
 </android.support.v4.widget.DrawerLayout>

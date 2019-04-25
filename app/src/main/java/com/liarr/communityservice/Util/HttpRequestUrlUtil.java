@@ -14,5 +14,9 @@ public class HttpRequestUrlUtil {
 
     public static String eventListUrl = DOMAIN + "/aaaa/listEvent";         // 查询 Event
 
+    public static String registerEventUrl = DOMAIN + "/aaaa/eventAdd";      // 发布 Event
+
+    public static String acceptEventUrl = DOMAIN + "/aaaa/accept";          // 接受 Event
+
     public static String locationUrl = "http://guolin.tech/api/china";      // 查询地点
 }

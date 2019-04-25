@@ -14,7 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Design.NoActionBar"
         android:usesCleartextTraffic="true">
-        <activity android:name=".View.Activity.EventDetailActivity"></activity>
+        <activity android:name=".View.Activity.EditPasswordActivity" />
+        <activity android:name=".View.Activity.MeActivity" />
+        <activity android:name=".View.Activity.RegisterEventActivity" />
+        <activity android:name=".View.Activity.EventDetailActivity" />
         <activity android:name=".View.Activity.EventListActivity" />
         <activity android:name=".View.Activity.LocationActivity" />
         <activity android:name=".View.Activity.AboutActivity" />

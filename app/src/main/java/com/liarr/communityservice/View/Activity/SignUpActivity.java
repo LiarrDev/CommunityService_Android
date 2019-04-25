@@ -39,7 +39,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-        signInLink = (TextView) findViewById(R.id.sign_in_link);
+        signInLink = findViewById(R.id.sign_in_link);
         signInLink.setText(Html.fromHtml("No account yet? <font color='#FFFFFF'><big>Create one</big></font>."));
         signInLink.setOnClickListener(v -> {
             Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
@@ -47,21 +47,21 @@ public class SignUpActivity extends AppCompatActivity {
             finish();
         });
 
-        nameEdit = (EditText) findViewById(R.id.name_edit);
-        telEdit = (EditText) findViewById(R.id.tel_edit);
-        passwordEdit = (EditText) findViewById(R.id.password_edit);
-        signUpBtn = (AppCompatButton) findViewById(R.id.sign_up_btn);
+        nameEdit = findViewById(R.id.name_edit);
+        telEdit = findViewById(R.id.tel_edit);
+        passwordEdit = findViewById(R.id.password_edit);
+        signUpBtn = findViewById(R.id.sign_up_btn);
         signUpBtn.setOnClickListener(v -> {
             name = nameEdit.getText().toString();
             tel = telEdit.getText().toString();
             password = passwordEdit.getText().toString();
 
             if (!InputMatcherUtil.isName(name)) {
-                AlertDialogUtil.showSignUpItemInputErrorDialog(this, "Name");
+                AlertDialogUtil.showUserInfoItemInputErrorDialog(this, "Name");
             } else if (!InputMatcherUtil.isTel(tel)) {
-                AlertDialogUtil.showSignUpItemInputErrorDialog(this, "Tel");
+                AlertDialogUtil.showUserInfoItemInputErrorDialog(this, "Tel");
             } else if (!InputMatcherUtil.isPassword(password)) {
-                AlertDialogUtil.showSignUpItemInputErrorDialog(this, "Password");
+                AlertDialogUtil.showUserInfoItemInputErrorDialog(this, "Password");
             } else {
                 submitSignUpForm(name, tel, password);
             }

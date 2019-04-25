@@ -47,7 +47,6 @@ public class EventItemAdapter extends RecyclerView.Adapter<EventItemAdapter.View
 
     public EventItemAdapter(List<Event> eventList) {
         mEventList = eventList;
-        LogUtil.e("==Adapter==", String.valueOf(mEventList.size()));
     }
 
     @NonNull

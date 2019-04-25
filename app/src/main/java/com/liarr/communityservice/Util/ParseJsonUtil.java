@@ -10,6 +10,7 @@ import com.liarr.communityservice.Database.Event;
 import com.liarr.communityservice.Database.Province;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class ParseJsonUtil {
             double point = userJsonObject.getDouble("point");
             String userName = userJsonObject.getString("userName");
             String tel = userJsonObject.getString("tel");
+            String password = userJsonObject.getString("password");
 
             SharedPreferences.Editor editor = context.getSharedPreferences("defaultUser", MODE_PRIVATE).edit();
             editor.putInt("coin", coin);
@@ -78,6 +80,7 @@ public class ParseJsonUtil {
             editor.putFloat("point", (float) point);
             editor.putString("userName", userName);
             editor.putString("tel", tel);
+            editor.putString("password", password);
             editor.apply();
         } catch (Exception e) {
             e.printStackTrace();
@@ -204,5 +207,95 @@ public class ParseJsonUtil {
             e.printStackTrace();
         }
         return eventList;
+    }
+
+    /**
+     * 解析提交发布 Event 时返回的 JSON，并返回对应的 Code
+     *
+     * @param json 提交发布 Event 时返回的 JSON
+     * @return 对应的 Code
+     */
+    public static String parseSubmitEventResponseCodeJson(String json) {
+        String code = null;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            code = jsonObject.getString("code");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return code;
+    }
+
+    /**
+     * 解析 Event 详细信息
+     *
+     * @param json 查询 Event 返回的 JSON
+     * @return Event
+     */
+    public static Event parseEventDetailJson(String json) {
+        Event event = null;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            String eventListObject = jsonObject.getString("eventlist");
+            JSONArray jsonArray = new JSONArray(eventListObject);
+            JSONObject eventObject = jsonArray.getJSONObject(0);
+            LogUtil.e("==EventDetail==", eventObject.toString());
+            int eid = eventObject.getInt("eid");
+            String eventName = eventObject.getString("eventName");
+            String eventContent = eventObject.getString("eventContent");
+            String eventTime = eventObject.getString("eventTime");
+            String category = eventObject.getString("category");
+            String city = eventObject.getString("city");
+            String county = eventObject.getString("district");
+            String street = eventObject.getString("street");
+            String address = eventObject.getString("address");
+            String clientName = eventObject.getString("clientName");
+            int coin = eventObject.getInt("coin");
+            event = new Event(eid, eventName, category, eventContent, eventTime, city, county, street, address, clientName, coin);
+            // TODO: 该方法可复用，更加详细的内容先判空，然后使用更详细的构造方法
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return event;
+    }
+
+    /**
+     * 提交接单申请后的响应
+     *
+     * @param json 服务器返回的 JSON
+     * @return 是否接单成功
+     */
+    public static boolean parseAcceptEventResponseJson(String json) {
+        boolean accept = false;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            String msg = jsonObject.getString("msg");
+            if (msg.equals("success")) {
+                accept = true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return accept;
+    }
+
+    /**
+     * 修改个人信息后的响应
+     *
+     * @param json 服务器返回的 JSON
+     * @return 是否修改成功
+     */
+    public static boolean parseUpdateUserInfoResponseJson(String json) {
+        boolean changed = false;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            String msg = jsonObject.getString("msg");
+            if (msg.equals("success")) {
+                changed = true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return changed;
     }
 }

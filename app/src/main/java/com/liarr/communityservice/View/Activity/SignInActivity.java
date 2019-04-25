@@ -54,7 +54,7 @@ public class SignInActivity extends AppCompatActivity {
             finish();
         }
 
-        signUpLink = (TextView) findViewById(R.id.sign_up_link);
+        signUpLink = findViewById(R.id.sign_up_link);
         signUpLink.setText(Html.fromHtml("No account yet? <font color='#FFFFFF'><big>Create one</big></font>."));
         signUpLink.setOnClickListener(v -> {
             Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
@@ -62,9 +62,9 @@ public class SignInActivity extends AppCompatActivity {
             finish();
         });
 
-        telEdit = (EditText) findViewById(R.id.tel_edit);
-        passwordEdit = (EditText) findViewById(R.id.password_edit);
-        signInBtn = (AppCompatButton) findViewById(R.id.sign_in_btn);
+        telEdit = findViewById(R.id.tel_edit);
+        passwordEdit = findViewById(R.id.password_edit);
+        signInBtn = findViewById(R.id.sign_in_btn);
         signInBtn.setOnClickListener(v -> {
             tel = telEdit.getText().toString();
             password = passwordEdit.getText().toString();
