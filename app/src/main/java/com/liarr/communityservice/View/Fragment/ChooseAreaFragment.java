@@ -73,9 +73,9 @@ public class ChooseAreaFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_choose_area, container, false);
-        titleText = (TextView) view.findViewById(R.id.title_text);
-        backButton = (Button) view.findViewById(R.id.back_button);
-        listView = (ListView) view.findViewById(R.id.location_list_view);
+        titleText = view.findViewById(R.id.title_text);
+        backButton = view.findViewById(R.id.back_button);
+        listView = view.findViewById(R.id.location_list_view);
         adapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapter);
         return view;
@@ -225,22 +225,30 @@ public class ChooseAreaFragment extends Fragment {
                 LogUtil.e("==HttpNewCall==", "Response");
                 String responseContent = response.body().string();
                 boolean result = false;
-                if (type.equals("province")) {
-                    result = ParseJsonUtil.handleProvinceJson(responseContent);
-                } else if (type.equals("city")) {
-                    result = ParseJsonUtil.handleCityJson(responseContent, selectedProvince.getId());
-                } else if (type.equals("county")) {
-                    result = ParseJsonUtil.handleCountyJson(responseContent, selectedCity.getId());
+                switch (type) {
+                    case "province":
+                        result = ParseJsonUtil.handleProvinceJson(responseContent);
+                        break;
+                    case "city":
+                        result = ParseJsonUtil.handleCityJson(responseContent, selectedProvince.getId());
+                        break;
+                    case "county":
+                        result = ParseJsonUtil.handleCountyJson(responseContent, selectedCity.getId());
+                        break;
                 }
                 if (result) {
                     Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
                         AlertDialogUtil.dismissProgressDialog();
-                        if (type.equals("province")) {
-                            queryProvinces();
-                        } else if (type.equals("city")) {
-                            queryCities();
-                        } else if (type.equals("county")) {
-                            queryCounties();
+                        switch (type) {
+                            case "province":
+                                queryProvinces();
+                                break;
+                            case "city":
+                                queryCities();
+                                break;
+                            case "county":
+                                queryCounties();
+                                break;
                         }
                     });
                 }

@@ -170,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
 
                 case R.id.nav_event:
+                    Intent eventIntent = new Intent(this, PersonalEventActivity.class);
+                    startActivity(eventIntent);
                     break;
 
                 case R.id.nav_sign_out:

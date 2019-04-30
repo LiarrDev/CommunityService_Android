@@ -3,6 +3,7 @@ package com.liarr.communityservice.Util;
 import com.liarr.communityservice.Database.Event;
 
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -100,5 +101,40 @@ public class QueryEventUtil {
             e.printStackTrace();
         }
         return event;
+    }
+
+    /**
+     * 根据 Event 状态 查询个人 Event
+     *
+     * @param uid         用户 ID
+     * @param eventStatus Event 状态
+     * @param role        用户当前角色，即作为发布者还是接单人
+     * @return 重新组装过的 List
+     */
+    public static List<Event> queryPersonalEventWithStatus(int uid, String eventStatus, int role) {
+        List<Event> eventList = null;
+        String idRole = null;
+        if (role == EventStatusUtil.AS_ACCEPTER) {
+            idRole = "acceptId";
+        } else if (role == EventStatusUtil.AS_CLIENT) {
+            idRole = "clientId";
+        }
+        try {
+            OkHttpClient client = new OkHttpClient();
+            RequestBody requestBody = new FormBody.Builder()
+                    .add("status", eventStatus)
+                    .add(Objects.requireNonNull(idRole), String.valueOf(uid))
+                    .build();
+            Request request = new Request.Builder()
+                    .url(HttpRequestUrlUtil.eventListUrl)
+                    .post(requestBody)
+                    .build();
+            Response response = client.newCall(request).execute();
+            String responseContent = response.body().string();
+            eventList = ParseJsonUtil.parseEventListJson(responseContent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return eventList;
     }
 }

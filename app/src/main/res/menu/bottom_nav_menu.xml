@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_event_published"
+        android:icon="@drawable/ic_event_published"
+        android:title="上线" />
+
+    <item
+        android:id="@+id/nav_event_finished"
+        android:icon="@drawable/ic_event_finished"
+        android:title="完成" />
+
+    <item
+        android:id="@+id/nav_event_audit"
+        android:icon="@drawable/ic_event_audit"
+        android:title="审核" />
+
+</menu>
