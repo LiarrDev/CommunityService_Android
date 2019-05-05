@@ -11,8 +11,8 @@
         android:id="@+id/about_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="About"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="About" />
 
     <TextView
         android:id="@+id/designer"

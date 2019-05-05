@@ -12,7 +12,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.liarr.communityservice.R;

@@ -9,13 +9,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView recyclerView;
 
-    ImageView star1, star2, star3, star4, star5;
+    AppCompatRatingBar starsView;
 
     int userId;
     String userName;
@@ -137,18 +137,12 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-
-        // TODO: 把星星换成 RatingBar
         drawerLayout = findViewById(R.id.main_drawer);
         navigationView = findViewById(R.id.drawer_nav);
         View headerView = navigationView.getHeaderView(0);
         nameNav = headerView.findViewById(R.id.header_name);
         coinText = headerView.findViewById(R.id.coin_text);
-        star1 = headerView.findViewById(R.id.star_1);
-        star2 = headerView.findViewById(R.id.star_2);
-        star3 = headerView.findViewById(R.id.star_3);
-        star4 = headerView.findViewById(R.id.star_4);
-        star5 = headerView.findViewById(R.id.star_5);
+        starsView = headerView.findViewById(R.id.stars_view);
     }
 
     /**
@@ -175,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
 
                 case R.id.nav_location:
                     Intent locationIntent = new Intent(this, LocationActivity.class);
-                    locationIntent.putExtra("action", SETTING_GLOBAL_LOCATION);
+                    locationIntent.setAction(SETTING_GLOBAL_LOCATION);
                     startActivity(locationIntent);
                     break;
 
@@ -266,36 +260,7 @@ public class MainActivity extends AppCompatActivity {
         float point = preferences.getFloat("point", 0);
         nameNav.setText(userName);
         coinText.setText(coin + "");
-        // 设置第 1 颗星
-        if (point >= 0.5 && point < 1.5) {
-            star1.setImageResource(R.drawable.ic_star_half);
-        } else if (point >= 1.5) {
-            star1.setImageResource(R.drawable.ic_star_full);
-        }
-        // 设置第 2 颗星
-        if (point >= 2.5 && point < 3.5) {
-            star2.setImageResource(R.drawable.ic_star_half);
-        } else if (point >= 3.5) {
-            star2.setImageResource(R.drawable.ic_star_full);
-        }
-        // 设置第 3 颗星
-        if (point >= 4.5 && point < 5.5) {
-            star3.setImageResource(R.drawable.ic_star_half);
-        } else if (point >= 5.5) {
-            star3.setImageResource(R.drawable.ic_star_full);
-        }
-        // 设置第 4 颗星
-        if (point >= 6.5 && point < 7.5) {
-            star4.setImageResource(R.drawable.ic_star_half);
-        } else if (point >= 7.5) {
-            star4.setImageResource(R.drawable.ic_star_full);
-        }
-        // 设置第 5 颗星
-        if (point >= 8.5 && point < 9.5) {
-            star5.setImageResource(R.drawable.ic_star_half);
-        } else if (point >= 9.5) {
-            star5.setImageResource(R.drawable.ic_star_full);
-        }
+        starsView.setRating(point / 2);
     }
 
     /**

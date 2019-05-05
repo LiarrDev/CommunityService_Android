@@ -86,7 +86,7 @@ public class ChooseAreaFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         // 获取 Activity 中通过 Intent 传过来的 Action
-        String action = getActivity().getIntent().getStringExtra("action");
+        String action = getActivity().getIntent().getAction();
         LogUtil.e("==FragmentAction==", action);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
@@ -95,8 +95,6 @@ public class ChooseAreaFragment extends Fragment {
                 queryCities();
             } else if (currentLevel == LEVEL_CITY) {
                 selectedCity = cityList.get(position);
-//                Toast.makeText(getContext(), selectedCity.getCityName() + " Clicked.", Toast.LENGTH_LONG).show();
-
                 if (action.equals(SETTING_GLOBAL_LOCATION)) {       // 如果是在 Drawer 中进来就只查询到市并保存
                     LogUtil.e("==DrawerAction==", "INSIDE");
                     // 用 SharedPreferences 保存选中的位置

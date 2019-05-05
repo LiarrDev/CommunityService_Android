@@ -22,7 +22,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Objects;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -155,7 +154,7 @@ public class RegisterEventActivity extends AppCompatActivity {
 
         eventLocationEdit.setOnClickListener(v -> {
             Intent intent = new Intent(RegisterEventActivity.this, LocationActivity.class);
-            intent.putExtra("action", SETTING_ADD_EVENT_LOCATION);
+            intent.setAction(SETTING_ADD_EVENT_LOCATION);
             startActivity(intent);
         });
 
