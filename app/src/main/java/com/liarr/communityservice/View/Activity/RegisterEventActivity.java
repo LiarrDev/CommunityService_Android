@@ -267,7 +267,7 @@ public class RegisterEventActivity extends AppCompatActivity {
                         String responseContent = response.body().string();
                         LogUtil.e("==SubmitEventResponseJson==", responseContent);
                         runOnUiThread(() -> {
-                            if (ParseJsonUtil.parseSubmitEventResponseCodeJson(responseContent).equals("0")) {      // Code 为 0，提交成功
+                            if (ParseJsonUtil.parseJsonMessage(responseContent)) {
                                 Toast.makeText(RegisterEventActivity.this, "提交成功", Toast.LENGTH_LONG).show();
                                 LogUtil.e("==RegisterEvent==", "Succeed");
                                 finish();
@@ -282,10 +282,10 @@ public class RegisterEventActivity extends AppCompatActivity {
                     }
                 }).start();
             } else {
-                AlertDialogUtil.showInputNotChangeDialog(this);
+                AlertDialogUtil.showMessageDialog(this, "未进行任何修改");
             }
         } else {
-            AlertDialogUtil.showSubmitEventError(this);
+            AlertDialogUtil.showMessageDialog(this, "填写未完成");
         }
     }
 

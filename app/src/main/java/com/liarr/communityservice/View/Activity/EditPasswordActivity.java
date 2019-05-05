@@ -55,14 +55,14 @@ public class EditPasswordActivity extends AppCompatActivity {
         String newPassword = newPasswordEdit.getText().toString();
         String confirmNewPassword = confirmNewPasswordEdit.getText().toString();
         getUserInfoFromSharedPreference();
-        if (!oldPassword.equals(prefPassword)) {                            // 原密码不正确
-            AlertDialogUtil.showOldPasswordInputErrorDialog(this);
+        if (!oldPassword.equals(prefPassword)) {
+            AlertDialogUtil.showMessageDialog(this, "原密码输入不正确");
         } else if (!newPassword.equals(confirmNewPassword)) {
-            AlertDialogUtil.showNewPasswordNotConfirmDialog(this);  // 新密码两次输入不匹配
+            AlertDialogUtil.showMessageDialog(this, "新密码两次输入不匹配");
         } else if (!InputMatcherUtil.isPassword(confirmNewPassword)) {
             AlertDialogUtil.showUserInfoItemInputErrorDialog(this, "Password");     // 密码格式不正确
         } else if (confirmNewPassword.equals(oldPassword)) {
-            AlertDialogUtil.showInputNotChangeDialog(this);         // 两次输入密码相同
+            AlertDialogUtil.showMessageDialog(this, "未进行任何修改");         // 两次输入密码相同
         } else {
             new Thread(() -> {
                 if (UpdateUserInfoUtil.submitChangesToServer(EditPasswordActivity.this, prefUserId, prefUserName, prefTel, confirmNewPassword, prefDoneEventNum, prefPoint, prefCoin)) {

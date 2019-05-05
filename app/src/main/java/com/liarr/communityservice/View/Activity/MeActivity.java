@@ -134,7 +134,7 @@ public class MeActivity extends AppCompatActivity {
     private void submitItemChanges(String item, String newValue) {
         if (item.equals("name")) {
             if (newValue.equals(prefUserName)) {        // 未产生修改
-                AlertDialogUtil.showInputNotChangeDialog(this);
+                AlertDialogUtil.showMessageDialog(this, "未进行任何修改");
             } else if (!InputMatcherUtil.isName(newValue)) {        // 不是正确的 Name
                 AlertDialogUtil.showUserInfoItemInputErrorDialog(this, "Name");
             } else {
@@ -154,7 +154,7 @@ public class MeActivity extends AppCompatActivity {
             }
         } else if (item.equals("tel")) {
             if (newValue.equals(prefTel)) {
-                AlertDialogUtil.showInputNotChangeDialog(this);
+                AlertDialogUtil.showMessageDialog(this, "未进行任何修改");
             } else if (!InputMatcherUtil.isTel(newValue)) {
                 AlertDialogUtil.showUserInfoItemInputErrorDialog(this, "Tel");
             } else {

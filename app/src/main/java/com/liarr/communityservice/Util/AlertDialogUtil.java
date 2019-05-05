@@ -73,14 +73,14 @@ public class AlertDialogUtil {
     /**
      * 根据服务器响应注册请求返回的 Code 弹出不同的 Dialog
      *
-     * @param context      Dialog 所在的 Activity
-     * @param responseCode 服务器响应的 Code
+     * @param context     Dialog 所在的 Activity
+     * @param responseMsg 服务器响应的结果
      */
-    public static void showSignUpResponseDialog(Context context, String responseCode) {
+    public static void showSignUpResponseDialog(Context context, boolean responseMsg) {
         dismissProgressDialog();
         AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
         dialog.setTitle(R.string.app_name).setCancelable(false);
-        if (responseCode.equals("0")) {
+        if (responseMsg) {
             LogUtil.e("==ResponseCode==", "0");
             dialog.setMessage("Sign Up Succeed. Please Sign In.").setPositiveButton("OK", (dialogInterface, which) -> {
                 Intent intent = new Intent(context, SignInActivity.class);
@@ -88,25 +88,11 @@ public class AlertDialogUtil {
                 Activity activity = (Activity) context;
                 activity.finish();
             });
-        } else if (responseCode.equals("1")) {
+        } else {
             LogUtil.e("==ResponseCode==", "1");
             dialog.setMessage("Sign Up Failed. Please Try Again.").setPositiveButton("OK", null);
         }
         dialog.show();
-    }
-
-    /**
-     * 登录填写 Tel 或 Password 错误时弹出的 Dialog
-     *
-     * @param context Dialog 所在的 Activity
-     */
-    public static void showSignInItemInputErrorDialog(Context context) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-        dialog.setTitle(R.string.app_name)
-                .setMessage("Your Tel or Password must be wrong. Please check again.")
-                .setCancelable(false)
-                .setPositiveButton("OK", null)
-                .show();
     }
 
     /**
@@ -152,20 +138,6 @@ public class AlertDialogUtil {
     }
 
     /**
-     * 提交 Event 时如有未填写项则弹出此 Dialog
-     *
-     * @param context Dialog 所在的 Activity
-     */
-    public static void showSubmitEventError(Context context) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-        dialog.setTitle(R.string.app_name)
-                .setMessage("填写未完成")
-                .setCancelable(false)
-                .setPositiveButton("OK", null)
-                .show();
-    }
-
-    /**
      * 点击接单按钮时弹出的确认 Dialog
      *
      * @param context Dialog 所在 Activity
@@ -181,7 +153,6 @@ public class AlertDialogUtil {
                     SharedPreferences preferences = context.getSharedPreferences("defaultUser", MODE_PRIVATE);
                     int prefUserId = preferences.getInt("userId", -1);
                     String prefUserName = preferences.getString("userName", "");
-
                     new Thread(() -> {
                         try {
                             OkHttpClient client = new OkHttpClient();
@@ -197,7 +168,7 @@ public class AlertDialogUtil {
                             Response response = client.newCall(request).execute();
                             String responseContent = response.body().string();
                             LogUtil.e("==AcceptEventRequest==", responseContent);
-                            if (ParseJsonUtil.parseAcceptEventResponseJson(responseContent)) {
+                            if (ParseJsonUtil.parseJsonMessage(responseContent)) {
                                 Activity activity = (Activity) context;
                                 activity.runOnUiThread(() -> {
                                     Toast.makeText(context, "接单成功", Toast.LENGTH_LONG).show();
@@ -210,48 +181,6 @@ public class AlertDialogUtil {
                     }).start();
                 })
                 .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-    /**
-     * 修改信息时因填写的内容与原文相同或未产生修改时弹出的 Dialog
-     *
-     * @param context Dialog 所在的 Activity
-     */
-    public static void showInputNotChangeDialog(Context context) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-        dialog.setTitle(R.string.app_name)
-                .setMessage("未进行任何修改")
-                .setCancelable(false)
-                .setPositiveButton("OK", null)
-                .show();
-    }
-
-    /**
-     * 修改密码时原密码输入错误
-     *
-     * @param context Dialog 所在 Activity
-     */
-    public static void showOldPasswordInputErrorDialog(Context context) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-        dialog.setTitle(R.string.app_name)
-                .setMessage("原密码输入不正确")
-                .setCancelable(false)
-                .setPositiveButton("OK", null)
-                .show();
-    }
-
-    /**
-     * 修改密码时新密码两次输入不匹配
-     *
-     * @param context Dialog 所在 Activity
-     */
-    public static void showNewPasswordNotConfirmDialog(Context context) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
-        dialog.setTitle(R.string.app_name)
-                .setMessage("新密码两次输入不匹配")
-                .setCancelable(false)
-                .setPositiveButton("OK", null)
                 .show();
     }
 
@@ -297,6 +226,12 @@ public class AlertDialogUtil {
                 .show();
     }
 
+    /**
+     * 发布者确认 Event 完成时弹出的 Dialog，用于填写评论
+     *
+     * @param context Dialog 所在的 Activity
+     * @param eid     Event ID
+     */
     public static void showClientConfirmEventDoneDialog(Context context, int eid) {
         Activity activity = (Activity) context;
         View dialogView = activity.getLayoutInflater().inflate(R.layout.dialog_event_rating, null);
@@ -346,6 +281,21 @@ public class AlertDialogUtil {
                     }
                 })
                 .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    /**
+     * 用于提示信息的 Dialog
+     *
+     * @param context Dialog 所在 Activity
+     * @param msg     提示的信息
+     */
+    public static void showMessageDialog(Context context, String msg) {
+        new AlertDialog.Builder(context, R.style.AlertDialogTheme)
+                .setTitle(R.string.app_name)
+                .setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton("OK", null)
                 .show();
     }
 }

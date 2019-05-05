@@ -71,7 +71,7 @@ public class SignInActivity extends AppCompatActivity {
             if (!InputMatcherUtil.isTel(tel) || !InputMatcherUtil.isPassword(password)) {
                 LogUtil.i("==SignInTel==", tel);
                 LogUtil.i("==SignInPassword==", password);
-                AlertDialogUtil.showSignInItemInputErrorDialog(this);
+                AlertDialogUtil.showMessageDialog(this, "Your Tel or Password must be wrong. Please check again.");
             } else {
                 submitSignInForm(tel, password);
             }
@@ -107,7 +107,7 @@ public class SignInActivity extends AppCompatActivity {
                 String responseContent = response.body().string();
                 LogUtil.e("==SignInJSON==", responseContent);
 
-                if (ParseJsonUtil.parseSignUpOrSignInCodeJson(responseContent).equals("0")) {       // Code 为 0，服务器响应登录成功
+                if (ParseJsonUtil.parseJsonMessage(responseContent)) {       // Code 为 0，服务器响应登录成功
                     // 解析得到 uid 并存储
                     userId = ParseJsonUtil.parseUserIdJson(responseContent);
                     LogUtil.e("===UserID===", userId + "");
@@ -125,10 +125,10 @@ public class SignInActivity extends AppCompatActivity {
                     intent.putExtra("userId", userId);
                     startActivity(intent);
                     finish();
-                } else if (ParseJsonUtil.parseSignUpOrSignInCodeJson(responseContent).equals("1")) {    // Code 为 1，服务器响应登录失败
+                } else {    // Code 为 1，服务器响应登录失败
                     LogUtil.e("==SignInCode==", "1");
                     runOnUiThread(() -> {
-                        AlertDialogUtil.showSignInItemInputErrorDialog(this);
+                        AlertDialogUtil.showMessageDialog(this, "Your Tel or Password must be wrong. Please check again.");
                         AlertDialogUtil.dismissProgressDialog();        // 隐藏 ProgressBar
                     });
                 }

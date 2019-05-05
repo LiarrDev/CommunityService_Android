@@ -21,20 +21,23 @@ import static android.content.Context.MODE_PRIVATE;
 public class ParseJsonUtil {
 
     /**
-     * 解析注册或登陆返回的 JSON，并返回对应的 Code
+     * 解析操作提交到服务器后返回的状态响应
      *
-     * @param json 注册或登陆返回的 JSON 字符串
-     * @return 注册或登陆的状态 Code
+     * @param json 服务器返回的 JSON
+     * @return 响应结果，成功为 TRUE，失败为 FALSE
      */
-    public static String parseSignUpOrSignInCodeJson(String json) {
-        String code = null;
+    public static boolean parseJsonMessage(String json) {
+        boolean flag = false;
         try {
             JSONObject jsonObject = new JSONObject(json);
-            code = jsonObject.getString("code");
-        } catch (Exception e) {
+            String msg = jsonObject.getString("msg");
+            if (msg.equals("success")) {
+                flag = true;
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-        return code;
+        return flag;
     }
 
     /**
@@ -213,23 +216,6 @@ public class ParseJsonUtil {
     }
 
     /**
-     * 解析提交发布 Event 时返回的 JSON，并返回对应的 Code
-     *
-     * @param json 提交发布 Event 时返回的 JSON
-     * @return 对应的 Code
-     */
-    public static String parseSubmitEventResponseCodeJson(String json) {
-        String code = null;
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            code = jsonObject.getString("code");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return code;
-    }
-
-    /**
      * 解析 Event 详细信息
      *
      * @param json 查询 Event 返回的 JSON
@@ -276,65 +262,5 @@ public class ParseJsonUtil {
             e.printStackTrace();
         }
         return event;
-    }
-
-    /**
-     * 提交接单申请后的响应
-     *
-     * @param json 服务器返回的 JSON
-     * @return 是否接单成功
-     */
-    public static boolean parseAcceptEventResponseJson(String json) {
-        boolean accept = false;
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            String msg = jsonObject.getString("msg");
-            if (msg.equals("success")) {
-                accept = true;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return accept;
-    }
-
-    /**
-     * 修改个人信息后的响应
-     *
-     * @param json 服务器返回的 JSON
-     * @return 是否修改成功
-     */
-    public static boolean parseUpdateUserInfoResponseJson(String json) {
-        boolean changed = false;
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            String msg = jsonObject.getString("msg");
-            if (msg.equals("success")) {
-                changed = true;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return changed;
-    }
-
-    /**
-     * 解析操作提交到服务器后返回的状态响应
-     *
-     * @param json 服务器返回的 JSON
-     * @return 响应结果，成功为 TRUE，失败为 FALSE
-     */
-    public static boolean parseJsonMessage(String json) {
-        boolean flag = false;
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            String msg = jsonObject.getString("msg");
-            if (msg.equals("success")) {
-                flag = true;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return flag;
     }
 }

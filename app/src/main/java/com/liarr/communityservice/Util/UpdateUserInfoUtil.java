@@ -32,7 +32,7 @@ public class UpdateUserInfoUtil {
             Response response = client.newCall(request).execute();
             String responseContent = response.body().string();
             LogUtil.e("==ChangeUserInfo==", responseContent);
-            changed = ParseJsonUtil.parseUpdateUserInfoResponseJson(responseContent);
+            changed = ParseJsonUtil.parseJsonMessage(responseContent);
             if (changed) {          // 修改成功则同步到本地
                 ParseJsonUtil.parseUserInfoJson(context, responseContent);
             }
