@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.bumptech.glide.Glide;
 import com.liarr.communityservice.Database.Event;
 import com.liarr.communityservice.R;
 import com.liarr.communityservice.Util.AlertDialogUtil;
@@ -135,22 +136,22 @@ public class EventDetailActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         switch (category) {
                             case "医护":
-                                channelImg.setImageResource(R.drawable.ic_nursing);
+                                Glide.with(this).load(R.drawable.ic_nursing).into(channelImg);
                                 break;
                             case "跑腿":
-                                channelImg.setImageResource(R.drawable.ic_legwork);
+                                Glide.with(this).load(R.drawable.ic_legwork).into(channelImg);
                                 break;
                             case "清洁":
-                                channelImg.setImageResource(R.drawable.ic_cleaning);
+                                Glide.with(this).load(R.drawable.ic_cleaning).into(channelImg);
                                 break;
                             case "教育":
-                                channelImg.setImageResource(R.drawable.ic_education);
+                                Glide.with(this).load(R.drawable.ic_education).into(channelImg);
                                 break;
                             case "餐饮":
-                                channelImg.setImageResource(R.drawable.ic_repast);
+                                Glide.with(this).load(R.drawable.ic_repast).into(channelImg);
                                 break;
                             case "维修":
-                                channelImg.setImageResource(R.drawable.ic_repair);
+                                Glide.with(this).load(R.drawable.ic_repair).into(channelImg);
                                 break;
                             default:
                         }
@@ -176,7 +177,6 @@ public class EventDetailActivity extends AppCompatActivity {
 
                         AlertDialogUtil.dismissProgressDialog();
                     });
-
                 }
             }).start();
 

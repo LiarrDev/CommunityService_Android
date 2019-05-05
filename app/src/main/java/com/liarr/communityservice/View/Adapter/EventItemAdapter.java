@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.liarr.communityservice.Database.Event;
 import com.liarr.communityservice.R;
 import com.liarr.communityservice.Util.LogUtil;
@@ -74,22 +75,22 @@ public class EventItemAdapter extends RecyclerView.Adapter<EventItemAdapter.View
         Event event = mEventList.get(i);
         switch (event.getCategory()) {
             case "医护":
-                viewHolder.eventCategoryImage.setImageResource(R.drawable.ic_nursing);
+                Glide.with(mContext).load(R.drawable.ic_nursing).into(viewHolder.eventCategoryImage);
                 break;
             case "跑腿":
-                viewHolder.eventCategoryImage.setImageResource(R.drawable.ic_legwork);
+                Glide.with(mContext).load(R.drawable.ic_legwork).into(viewHolder.eventCategoryImage);
                 break;
             case "清洁":
-                viewHolder.eventCategoryImage.setImageResource(R.drawable.ic_cleaning);
+                Glide.with(mContext).load(R.drawable.ic_cleaning).into(viewHolder.eventCategoryImage);
                 break;
             case "教育":
-                viewHolder.eventCategoryImage.setImageResource(R.drawable.ic_education);
+                Glide.with(mContext).load(R.drawable.ic_education).into(viewHolder.eventCategoryImage);
                 break;
             case "餐饮":
-                viewHolder.eventCategoryImage.setImageResource(R.drawable.ic_repast);
+                Glide.with(mContext).load(R.drawable.ic_repast).into(viewHolder.eventCategoryImage);
                 break;
             case "维修":
-                viewHolder.eventCategoryImage.setImageResource(R.drawable.ic_repair);
+                Glide.with(mContext).load(R.drawable.ic_repair).into(viewHolder.eventCategoryImage);
                 break;
             default:
         }
