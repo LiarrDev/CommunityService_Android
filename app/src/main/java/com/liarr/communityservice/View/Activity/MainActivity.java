@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.liarr.communityservice.Database.Event;
 import com.liarr.communityservice.R;
+import com.liarr.communityservice.Util.EventStatusUtil;
 import com.liarr.communityservice.Util.HttpRequestUrlUtil;
 import com.liarr.communityservice.Util.LogUtil;
 import com.liarr.communityservice.Util.ParseJsonUtil;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     NavigationView navigationView;
     TextView nameNav;
     TextView coinText;
+    TextView noEventText;
     FloatingActionButton registerFab;
 
     LinearLayout channelNursing;
@@ -82,6 +84,11 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         initDrawer();
         initEventList();
+
+        // 设置 Event List 的查询状态为其他用户发布的未接单 Event
+        SharedPreferences.Editor editor = getSharedPreferences("defaultUser", MODE_PRIVATE).edit();
+        editor.putString("queryEventStatus", EventStatusUtil.UNACCEPTED);
+        editor.apply();
     }
 
     /**
@@ -95,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_me);
         }
+
+        noEventText = findViewById(R.id.no_all_event_text);
 
         channelNursing = findViewById(R.id.channel_nursing);
         channelNursing.setOnClickListener(v -> openChannel("医护"));
@@ -117,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         registerFab = findViewById(R.id.add_fab);
         registerFab.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RegisterEventActivity.class);
+            intent.setAction("new_event");
             intent.putExtra("userName", userName);
             intent.putExtra("userId", userId);
             startActivity(intent);
@@ -199,12 +209,16 @@ public class MainActivity extends AppCompatActivity {
      * 加载 Event List
      */
     private void initEventList() {
+        noEventText.setVisibility(View.GONE);
         new Thread(() -> {
             // 从 SharedPreference 中取出 Location
             SharedPreferences preferences = getSharedPreferences("defaultUser", MODE_PRIVATE);
             String prefLocation = preferences.getString("location", "");
             eventList = QueryEventUtil.queryUnacceptedEvent(userId, prefLocation);
             runOnUiThread(() -> {
+                if (eventList.size() <= 0) {
+                    noEventText.setVisibility(View.VISIBLE);
+                }
                 adapter = new EventItemAdapter(eventList);
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();

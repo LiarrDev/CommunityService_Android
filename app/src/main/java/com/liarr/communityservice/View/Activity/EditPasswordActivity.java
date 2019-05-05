@@ -92,7 +92,6 @@ public class EditPasswordActivity extends AppCompatActivity {
         prefCoin = preferences.getInt("coin", 0);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {

@@ -22,8 +22,8 @@
                 android:id="@+id/main_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:titleTextColor="@android:color/white"
-                android:background="@color/colorPrimary" />
+                android:background="@color/colorPrimary"
+                app:titleTextColor="@android:color/white" />
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -44,16 +44,18 @@
                         <!-- 医护 -->
                         <LinearLayout
                             android:id="@+id/channel_nursing"
-                            android:padding="12dp"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal"
-                            android:layout_gravity="fill_horizontal|center_vertical"
                             android:layout_rowWeight="1"
-                            android:layout_columnWeight="1">
+                            android:layout_columnWeight="1"
+                            android:layout_gravity="fill_horizontal|center_vertical"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_nursing" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -63,16 +65,18 @@
                         <!-- 跑腿 -->
                         <LinearLayout
                             android:id="@+id/channel_legwork"
-                            android:padding="12dp"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal"
-                            android:layout_gravity="fill_horizontal|center_vertical"
                             android:layout_rowWeight="1"
-                            android:layout_columnWeight="1">
+                            android:layout_columnWeight="1"
+                            android:layout_gravity="fill_horizontal|center_vertical"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_legwork" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -82,16 +86,18 @@
                         <!-- 清洁 -->
                         <LinearLayout
                             android:id="@+id/channel_cleaning"
-                            android:padding="12dp"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal"
-                            android:layout_gravity="fill_horizontal|center_vertical"
                             android:layout_rowWeight="1"
-                            android:layout_columnWeight="1">
+                            android:layout_columnWeight="1"
+                            android:layout_gravity="fill_horizontal|center_vertical"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_cleaning" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -101,16 +107,18 @@
                         <!-- 教育 -->
                         <LinearLayout
                             android:id="@+id/channel_education"
-                            android:padding="12dp"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal"
-                            android:layout_gravity="fill_horizontal|center_vertical"
                             android:layout_rowWeight="1"
-                            android:layout_columnWeight="1">
+                            android:layout_columnWeight="1"
+                            android:layout_gravity="fill_horizontal|center_vertical"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_education" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -120,16 +128,18 @@
                         <!-- 餐饮 -->
                         <LinearLayout
                             android:id="@+id/channel_repast"
-                            android:padding="12dp"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal"
-                            android:layout_gravity="fill_horizontal|center_vertical"
                             android:layout_rowWeight="1"
-                            android:layout_columnWeight="1">
+                            android:layout_columnWeight="1"
+                            android:layout_gravity="fill_horizontal|center_vertical"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_repast" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -139,16 +149,18 @@
                         <!-- 维修 -->
                         <LinearLayout
                             android:id="@+id/channel_repair"
-                            android:padding="12dp"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal"
-                            android:layout_gravity="fill_horizontal|center_vertical"
                             android:layout_rowWeight="1"
-                            android:layout_columnWeight="1">
+                            android:layout_columnWeight="1"
+                            android:layout_gravity="fill_horizontal|center_vertical"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_repair" />
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -156,11 +168,27 @@
                         </LinearLayout>
                     </GridLayout>
 
+                    <!-- 分割线 -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@color/cardview_shadow_start_color" />
+
+                    <TextView
+                        android:id="@+id/no_all_event_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="32dp"
+                        android:gravity="center"
+                        android:text="当前地区暂无服务"
+                        android:textColor="@android:color/tertiary_text_dark"
+                        android:visibility="gone" />
+
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/main_recycler"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </ScrollView>
 

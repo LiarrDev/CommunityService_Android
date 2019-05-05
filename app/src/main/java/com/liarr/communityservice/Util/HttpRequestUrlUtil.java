@@ -18,5 +18,11 @@ public class HttpRequestUrlUtil {
 
     public static String acceptEventUrl = DOMAIN + "/aaaa/accept";          // 接受 Event
 
+    public static String updateEventUrl = DOMAIN + "/aaaa/eventUpdate";     // 更新未接单的 Event
+
+    public static String accepterSetDoneUrl = DOMAIN + "/aaaa/done";        // 接单人确认完成 Event
+
+    public static String clientConfirmDoneUrl = DOMAIN + "/aaaa/doneConfirm";   // 发布者确认完成 Event
+
     public static String locationUrl = "http://guolin.tech/api/china";      // 查询地点
 }

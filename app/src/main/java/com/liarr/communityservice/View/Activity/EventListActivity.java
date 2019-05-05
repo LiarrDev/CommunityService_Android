@@ -3,10 +3,12 @@ package com.liarr.communityservice.View.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.liarr.communityservice.Database.Event;
 import com.liarr.communityservice.R;
@@ -21,6 +23,7 @@ public class EventListActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     RecyclerView recyclerView;
+    AppCompatTextView noEventText;
 
     String channel;
     String location;
@@ -42,6 +45,7 @@ public class EventListActivity extends AppCompatActivity {
         LogUtil.e("==ListLocation==", location);
 
         recyclerView = findViewById(R.id.event_list_recycler);
+        noEventText = findViewById(R.id.no_event_text);
 
         toolbar = findViewById(R.id.event_list_toolbar);
         toolbar.setTitle(channel);
@@ -62,11 +66,15 @@ public class EventListActivity extends AppCompatActivity {
      * 加载 Event List
      */
     private void initEventList() {
+        noEventText.setVisibility(View.GONE);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         new Thread(() -> {
             eventList = QueryEventUtil.queryUnacceptedEventWithChannel(channel, userId, location);
             runOnUiThread(() -> {
+                if (eventList.size() <= 0) {
+                    noEventText.setVisibility(View.VISIBLE);
+                }
                 adapter = new EventItemAdapter(eventList);
                 recyclerView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();

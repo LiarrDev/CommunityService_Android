@@ -4,15 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@android:color/background_light"
+    android:orientation="vertical"
     tools:context=".View.Activity.EventListActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/event_list_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"/>
+        android:background="@color/colorPrimary" />
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/no_event_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="32dp"
+        android:gravity="center"
+        android:text="暂无服务"
+        android:theme="@style/Platform.MaterialComponents.Light"
+        android:visibility="gone" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/event_list_recycler"

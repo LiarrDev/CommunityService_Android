@@ -77,12 +77,12 @@ public class QueryEventUtil {
     }
 
     /**
-     * 根据 Eid 查询待接单的 Event
+     * 根据 Eid 查询的 Event
      *
      * @param eid Event ID
      * @return Event
      */
-    public static Event queryUnacceptedEventWithEid(int eid) {
+    public static Event queryEventWithEid(int eid) {
         Event event = null;
         try {
             OkHttpClient client = new OkHttpClient();
@@ -95,7 +95,7 @@ public class QueryEventUtil {
                     .build();
             Response response = client.newCall(request).execute();
             String responseContent = response.body().string();
-            LogUtil.e("==QueryUnacceptedEventWithEid==", responseContent);
+            LogUtil.e("==QueryEventWithEid==", responseContent);
             event = ParseJsonUtil.parseEventDetailJson(responseContent);
         } catch (Exception e) {
             e.printStackTrace();

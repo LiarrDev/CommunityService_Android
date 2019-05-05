@@ -7,9 +7,12 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatRatingBar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.liarr.communityservice.R;
@@ -37,7 +40,7 @@ public class AlertDialogUtil {
      * @param context Dialog 所在的 Context
      */
     public static void showProgressDialog(Context context) {
-        View progressBar = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null);
+        View progressBar = LayoutInflater.from(context).inflate(R.layout.dialog_progress_bar, null);
         progressDialog = new AlertDialog.Builder(context).create();
         progressDialog.setView(progressBar);
         progressDialog.setCanceledOnTouchOutside(false);
@@ -131,7 +134,7 @@ public class AlertDialogUtil {
      * @param nowDay   当前时间的日
      */
     public static void showDatePickerByRegisterEvent(Context context, AppCompatEditText editText, long minDay, int nowYear, int nowMonth, int nowDay) {
-        View datePickerDialog = LayoutInflater.from(context).inflate(R.layout.date_picker_dialog, null);
+        View datePickerDialog = LayoutInflater.from(context).inflate(R.layout.dialog_date_picker, null);
         DatePicker datePicker = datePickerDialog.findViewById(R.id.date_picker);
         datePicker.setMinDate(minDay);
         datePicker.init(nowYear, nowMonth, nowDay, (view, year, monthOfYear, dayOfMonth) -> {
@@ -250,6 +253,100 @@ public class AlertDialogUtil {
                 .setMessage("新密码两次输入不匹配")
                 .setCancelable(false)
                 .setPositiveButton("OK", null)
+                .show();
+    }
+
+    /**
+     * 接单人点击完成时弹出的 Dialog
+     *
+     * @param context Dialog 所在的 Activity
+     * @param eid     Event ID
+     */
+    public static void showAccepterSetEventDoneDialog(Context context, int eid) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(context, R.style.AlertDialogTheme);
+        dialog.setTitle(R.string.app_name)
+                .setMessage("确认已完成服务？")
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialogInterface, which) -> new Thread(() -> {
+                    try {
+                        OkHttpClient client = new OkHttpClient();
+                        RequestBody requestBody = new FormBody.Builder()
+                                .add("eid", String.valueOf(eid))
+                                .build();
+                        Request request = new Request.Builder()
+                                .url(HttpRequestUrlUtil.accepterSetDoneUrl)
+                                .post(requestBody)
+                                .build();
+                        Response response = client.newCall(request).execute();
+                        String responseContent = response.body().string();
+                        LogUtil.e("==AccepterSetDone==", responseContent);
+                        Activity activity = (Activity) context;
+                        activity.runOnUiThread(() -> {
+                            if (ParseJsonUtil.parseJsonMessage(responseContent)) {
+                                Toast.makeText(context, "操作成功", Toast.LENGTH_LONG).show();
+                                activity.finish();
+                            } else {
+                                Toast.makeText(context, "操作失败", Toast.LENGTH_LONG).show();
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    public static void showClientConfirmEventDoneDialog(Context context, int eid) {
+        Activity activity = (Activity) context;
+        View dialogView = activity.getLayoutInflater().inflate(R.layout.dialog_event_rating, null);
+        AppCompatRatingBar bar = dialogView.findViewById(R.id.event_rating_bar);
+        AppCompatEditText commentEdit = dialogView.findViewById(R.id.event_comment_edit);
+        new AlertDialog.Builder(context, R.style.AlertDialogTheme)
+                .setTitle("评价此次服务")
+                .setView(dialogView)
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialogInterface, which) -> {
+                    float ratingNum = bar.getRating();
+                    String comment = commentEdit.getText().toString();
+                    int point = (int) (ratingNum * 2);
+                    LogUtil.e("==Rating==", String.valueOf(ratingNum));
+                    LogUtil.e("==Comment==", comment);
+                    LogUtil.e("==Point==", String.valueOf(point));
+                    if (TextUtils.isEmpty(comment.trim())) {
+                        Toast.makeText(context, "评论未填写", Toast.LENGTH_LONG).show();
+                    } else {
+                        new Thread(() -> {
+                            try {
+                                OkHttpClient client = new OkHttpClient();
+                                RequestBody requestBody = new FormBody.Builder()
+                                        .add("eid", String.valueOf(eid))
+                                        .add("point", String.valueOf(point))
+                                        .add("comment", comment)
+                                        .build();
+                                Request request = new Request.Builder()
+                                        .url(HttpRequestUrlUtil.clientConfirmDoneUrl)
+                                        .post(requestBody)
+                                        .build();
+                                Response response = client.newCall(request).execute();
+                                String responseContent = response.body().string();
+                                LogUtil.e("==ClientSetDone==", responseContent);
+                                activity.runOnUiThread(() -> {
+                                    if (ParseJsonUtil.parseJsonMessage(responseContent)) {
+                                        Toast.makeText(context, "操作成功", Toast.LENGTH_LONG).show();
+                                        activity.finish();
+                                    } else {
+                                        Toast.makeText(context, "操作失败", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }).start();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
                 .show();
     }
 }

@@ -185,7 +185,7 @@ public class ParseJsonUtil {
             String eventTime;
             String city;
             String county;
-            int coin;
+            int coin = 0;
 
             for (int i = 0; i < eventListJsonArray.length(); i++) {
                 JSONObject eventListObject = eventListJsonArray.getJSONObject(i);
@@ -198,7 +198,10 @@ public class ParseJsonUtil {
                 eventTime = eventListObject.getString("eventTime");
                 city = eventListObject.getString("city");
                 county = eventListObject.getString("district");
-                coin = eventListObject.getInt("coin");
+                LogUtil.e("==CoinTypeBug==", eventListObject.getString("coin"));
+                if (!eventListObject.getString("coin").equals("null")) {
+                    coin = eventListObject.getInt("coin");
+                }
 
                 Event event = new Event(eid, eventName, category, eventTime, city, county, coin);
                 eventList.add(event);
@@ -249,10 +252,26 @@ public class ParseJsonUtil {
             String county = eventObject.getString("district");
             String street = eventObject.getString("street");
             String address = eventObject.getString("address");
+            int clientId = eventObject.getInt("clientId");
             String clientName = eventObject.getString("clientName");
-            int coin = eventObject.getInt("coin");
-            event = new Event(eid, eventName, category, eventContent, eventTime, city, county, street, address, clientName, coin);
-            // TODO: 该方法可复用，更加详细的内容先判空，然后使用更详细的构造方法
+            int acceptId = -1;
+            if (!eventObject.getString("acceptId").equals("null")) {
+                acceptId = eventObject.getInt("acceptId");
+            }
+            String acceptName = eventObject.getString("acceptName");
+            int coin = 0;
+            if (!eventObject.getString("coin").equals("null")) {
+                coin = eventObject.getInt("coin");
+            }
+            int point = 0;
+            if (!eventObject.getString("point").equals("null")) {
+                point = eventObject.getInt("point");
+            }
+            String comment = null;
+            if (!eventObject.getString("comment").equals("null")) {
+                comment = eventObject.getString("comment");
+            }
+            event = new Event(eid, eventName, category, eventContent, eventTime, city, county, street, address, clientId, clientName, acceptId, acceptName, coin, point, comment);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -297,5 +316,25 @@ public class ParseJsonUtil {
             e.printStackTrace();
         }
         return changed;
+    }
+
+    /**
+     * 解析操作提交到服务器后返回的状态响应
+     *
+     * @param json 服务器返回的 JSON
+     * @return 响应结果，成功为 TRUE，失败为 FALSE
+     */
+    public static boolean parseJsonMessage(String json) {
+        boolean flag = false;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            String msg = jsonObject.getString("msg");
+            if (msg.equals("success")) {
+                flag = true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return flag;
     }
 }

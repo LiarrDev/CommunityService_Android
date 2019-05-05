@@ -46,7 +46,7 @@ public class Event {
         this.coin = coin;
     }
 
-    public Event(int eid, String eventName, String category, String eventContent, String eventTime, String city, String county, String street, String address, String clientName, int coin) {
+    public Event(int eid, String eventName, String category, String eventContent, String eventTime, String city, String county, String street, String address, int clientId, String clientName, int acceptId, String acceptName, int coin, int point, String comment) {
         this.eid = eid;
         this.eventName = eventName;
         this.category = category;
@@ -56,8 +56,13 @@ public class Event {
         this.county = county;
         this.street = street;
         this.address = address;
+        this.clientId = clientId;
         this.clientName = clientName;
+        this.acceptId = acceptId;
+        this.acceptName = acceptName;
         this.coin = coin;
+        this.point = point;
+        this.comment = comment;
     }
 
     public int getEid() {

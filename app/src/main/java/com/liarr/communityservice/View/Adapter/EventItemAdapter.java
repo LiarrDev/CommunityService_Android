@@ -56,7 +56,7 @@ public class EventItemAdapter extends RecyclerView.Adapter<EventItemAdapter.View
         if (mContext == null) {
             mContext = viewGroup.getContext();
         }
-        View view = LayoutInflater.from(mContext).inflate(R.layout.event_list_item, viewGroup, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.adapter_event_list_item, viewGroup, false);
         final ViewHolder holder = new ViewHolder(view);
         holder.cardView.setOnClickListener(v -> {
             int position = holder.getAdapterPosition();
