@@ -24,6 +24,7 @@ import com.liarr.communityservice.R;
 import com.liarr.communityservice.Util.EventStatusUtil;
 import com.liarr.communityservice.Util.HttpRequestUrlUtil;
 import com.liarr.communityservice.Util.LogUtil;
+import com.liarr.communityservice.Util.NetworkTestUtil;
 import com.liarr.communityservice.Util.ParseJsonUtil;
 import com.liarr.communityservice.Util.QueryEventUtil;
 import com.liarr.communityservice.View.Adapter.EventItemAdapter;
@@ -207,15 +208,19 @@ public class MainActivity extends AppCompatActivity {
             // 从 SharedPreference 中取出 Location
             SharedPreferences preferences = getSharedPreferences("defaultUser", MODE_PRIVATE);
             String prefLocation = preferences.getString("location", "");
-            eventList = QueryEventUtil.queryUnacceptedEvent(userId, prefLocation);
-            runOnUiThread(() -> {
-                if (eventList.size() <= 0) {
-                    noEventText.setVisibility(View.VISIBLE);
-                }
-                adapter = new EventItemAdapter(eventList);
-                recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-            });
+            if (!NetworkTestUtil.isNetworkAvailable(this)) {
+                NetworkTestUtil.showNetworkDisableToast(this);
+            } else {
+                eventList = QueryEventUtil.queryUnacceptedEvent(userId, prefLocation);
+                runOnUiThread(() -> {
+                    if (eventList.size() <= 0) {
+                        noEventText.setVisibility(View.VISIBLE);
+                    }
+                    adapter = new EventItemAdapter(eventList);
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                });
+            }
         }).start();
     }
 
