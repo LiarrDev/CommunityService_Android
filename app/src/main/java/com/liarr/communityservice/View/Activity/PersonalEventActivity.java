@@ -18,6 +18,7 @@ import com.liarr.communityservice.R;
 import com.liarr.communityservice.Util.EventStatusUtil;
 import com.liarr.communityservice.Util.ListUtil;
 import com.liarr.communityservice.Util.LogUtil;
+import com.liarr.communityservice.Util.NetworkTestUtil;
 import com.liarr.communityservice.Util.QueryEventUtil;
 import com.liarr.communityservice.View.Adapter.EventItemAdapter;
 
@@ -187,32 +188,36 @@ public class PersonalEventActivity extends AppCompatActivity {
             // 从 SharedPreference 中取出 User ID
             SharedPreferences preferences = getSharedPreferences("defaultUser", MODE_PRIVATE);
             int prefUserId = preferences.getInt("userId", -1);
-            if (role == EventStatusUtil.AS_BOTH_OF_CLIENT_AND_ACCEPTER) {
-                // 查询当前用户作为发布者且接单人已点击完成但发布者还未点击完成的 Event
-                eventList = QueryEventUtil.queryPersonalEventWithStatus(prefUserId, EventStatusUtil.ACCEPTER_SET_DONE, EventStatusUtil.AS_CLIENT);
-                // 查询当前用户作为接单人且双方未点击完成的 Event
-                eventList.addAll(QueryEventUtil.queryPersonalEventWithStatus(prefUserId, eventStatus, EventStatusUtil.AS_CLIENT));
-                // 查询当前用户作为发布者且双方未点击完成的 Event
-                eventList.addAll(QueryEventUtil.queryPersonalEventWithStatus(prefUserId, eventStatus, EventStatusUtil.AS_ACCEPTER));
-                LogUtil.e("==OnGoingListSizeBefore==", String.valueOf(eventList.size()));
-                eventList = ListUtil.removeDuplicate(eventList);            // 不加这句会经常出现 Item 多次重复加载的情况，加上这句则极少出现
-                LogUtil.e("==OnGoingListSizeAfter==", String.valueOf(eventList.size()));
-            } else if (eventStatus.equals(EventStatusUtil.ANYONE_SET_DONE)) {
-                // 已完成状态下同时查询作为接单人点击已完成和双方点击已完成的 Event
-                eventList = QueryEventUtil.queryPersonalEventWithStatus(prefUserId, EventStatusUtil.ACCEPTER_SET_DONE, role);
-                eventList.addAll(QueryEventUtil.queryPersonalEventWithStatus(prefUserId, EventStatusUtil.DONE, role));
-//                eventList = ListUtil.removeDuplicate(eventList);          // 加上这句会偶尔出现加载不全的情况
+            if (!NetworkTestUtil.isNetworkAvailable(this)) {
+                NetworkTestUtil.showNetworkDisableToast(this);
             } else {
-                eventList = QueryEventUtil.queryPersonalEventWithStatus(prefUserId, eventStatus, role);
-            }
-            runOnUiThread(() -> {
-                if (eventList.size() <= 0) {
-                    noRecordText.setVisibility(View.VISIBLE);
+                if (role == EventStatusUtil.AS_BOTH_OF_CLIENT_AND_ACCEPTER) {
+                    // 查询当前用户作为发布者且接单人已点击完成但发布者还未点击完成的 Event
+                    eventList = QueryEventUtil.queryPersonalEventWithStatus(prefUserId, EventStatusUtil.ACCEPTER_SET_DONE, EventStatusUtil.AS_CLIENT);
+                    // 查询当前用户作为接单人且双方未点击完成的 Event
+                    eventList.addAll(QueryEventUtil.queryPersonalEventWithStatus(prefUserId, eventStatus, EventStatusUtil.AS_CLIENT));
+                    // 查询当前用户作为发布者且双方未点击完成的 Event
+                    eventList.addAll(QueryEventUtil.queryPersonalEventWithStatus(prefUserId, eventStatus, EventStatusUtil.AS_ACCEPTER));
+                    LogUtil.e("==OnGoingListSizeBefore==", String.valueOf(eventList.size()));
+                    eventList = ListUtil.removeDuplicate(eventList);            // 不加这句会经常出现 Item 多次重复加载的情况，加上这句则极少出现
+                    LogUtil.e("==OnGoingListSizeAfter==", String.valueOf(eventList.size()));
+                } else if (eventStatus.equals(EventStatusUtil.ANYONE_SET_DONE)) {
+                    // 已完成状态下同时查询作为接单人点击已完成和双方点击已完成的 Event
+                    eventList = QueryEventUtil.queryPersonalEventWithStatus(prefUserId, EventStatusUtil.ACCEPTER_SET_DONE, role);
+                    eventList.addAll(QueryEventUtil.queryPersonalEventWithStatus(prefUserId, EventStatusUtil.DONE, role));
+//                eventList = ListUtil.removeDuplicate(eventList);          // 加上这句会偶尔出现加载不全的情况
+                } else {
+                    eventList = QueryEventUtil.queryPersonalEventWithStatus(prefUserId, eventStatus, role);
                 }
-                adapter = new EventItemAdapter(eventList);
-                recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-            });
+                runOnUiThread(() -> {
+                    if (eventList.size() <= 0) {
+                        noRecordText.setVisibility(View.VISIBLE);
+                    }
+                    adapter = new EventItemAdapter(eventList);
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                });
+            }
         }).start();
     }
 

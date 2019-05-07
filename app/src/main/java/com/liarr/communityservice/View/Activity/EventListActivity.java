@@ -13,6 +13,7 @@ import android.view.View;
 import com.liarr.communityservice.Database.Event;
 import com.liarr.communityservice.R;
 import com.liarr.communityservice.Util.LogUtil;
+import com.liarr.communityservice.Util.NetworkTestUtil;
 import com.liarr.communityservice.Util.QueryEventUtil;
 import com.liarr.communityservice.View.Adapter.EventItemAdapter;
 
@@ -70,15 +71,19 @@ public class EventListActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         new Thread(() -> {
-            eventList = QueryEventUtil.queryUnacceptedEventWithChannel(channel, userId, location);
-            runOnUiThread(() -> {
-                if (eventList.size() <= 0) {
-                    noEventText.setVisibility(View.VISIBLE);
-                }
-                adapter = new EventItemAdapter(eventList);
-                recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-            });
+            if (!NetworkTestUtil.isNetworkAvailable(this)) {
+                NetworkTestUtil.showNetworkDisableToast(this);
+            } else {
+                eventList = QueryEventUtil.queryUnacceptedEventWithChannel(channel, userId, location);
+                runOnUiThread(() -> {
+                    if (eventList.size() <= 0) {
+                        noEventText.setVisibility(View.VISIBLE);
+                    }
+                    adapter = new EventItemAdapter(eventList);
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                });
+            }
         }).start();
     }
 
