@@ -4,11 +4,11 @@ import org.litepal.crud.LitePalSupport;
 
 public class Province extends LitePalSupport {
 
-    private int id;
+    private int id;                     // 省份 ID
 
-    private String provinceName;
+    private String provinceName;        // 省份名
 
-    private int provinceCode;
+    private int provinceCode;           // 省份代号
 
     public int getId() {
         return id;

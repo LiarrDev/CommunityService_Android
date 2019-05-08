@@ -4,11 +4,11 @@ import org.litepal.crud.LitePalSupport;
 
 public class County extends LitePalSupport {
 
-    private int id;
+    private int id;                 // 县 ID
 
-    private String countyName;
+    private String countyName;      // 县名
 
-    private int cityId;
+    private int cityId;             // 当前县所属市的 ID
 
     public int getId() {
         return id;

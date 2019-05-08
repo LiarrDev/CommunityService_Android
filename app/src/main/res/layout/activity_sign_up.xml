@@ -67,7 +67,8 @@
                 android:layout_height="wrap_content"
                 android:hint="Password"
                 android:imeOptions="actionGo"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:maxLength="14" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.v7.widget.AppCompatButton

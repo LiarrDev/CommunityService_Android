@@ -36,7 +36,7 @@ public class InputMatcherUtil {
 
         boolean isPassword = false;
 
-        if (!TextUtils.isEmpty(password.trim()) && password.length() >= 6) {
+        if (!TextUtils.isEmpty(password.trim()) && password.length() >= 6 && password.length() <= 14) {
             isPassword = true;
         }
 

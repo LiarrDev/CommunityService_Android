@@ -263,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
         int coin = preferences.getInt("coin", 0);
         float point = preferences.getFloat("point", 0);
         nameNav.setText(userName);
-        coinText.setText(coin + "");
+        coinText.setText(String.valueOf(coin));
         starsView.setRating(point / 2);
     }
 

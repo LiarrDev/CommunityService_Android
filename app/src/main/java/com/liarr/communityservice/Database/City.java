@@ -4,13 +4,13 @@ import org.litepal.crud.LitePalSupport;
 
 public class City extends LitePalSupport {
 
-    private int id;
+    private int id;                     // 城市 ID
 
-    private String cityName;
+    private String cityName;            // 城市名
 
-    private int cityCode;
+    private int cityCode;               // 城市代号
 
-    private int provinceId;
+    private int provinceId;             // 当前城市所属省份的 ID
 
     public int getId() {
         return id;
