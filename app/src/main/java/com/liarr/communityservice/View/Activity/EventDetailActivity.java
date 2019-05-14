@@ -181,7 +181,8 @@ public class EventDetailActivity extends AppCompatActivity {
             }).start();
 
             if (queryEventStatus.equals(EventStatusUtil.UNACCEPTED)) {      // 在主页查询其他用户发布的待接单的 Event
-                resetEventStatusBtn.setOnClickListener(v -> AlertDialogUtil.showMakeSureToAcceptEventDialog(EventDetailActivity.this, eid));
+                eventClientNameText.setOnClickListener(v -> AlertDialogUtil.showDealerInfoDialog(this, clientId));
+                resetEventStatusBtn.setOnClickListener(v -> AlertDialogUtil.showMakeSureToAcceptEventDialog(this, eid));
             } else if (queryEventStatus.equals(EventStatusUtil.PUBLISHED_BUT_NOT_ACCEPTED)) {       // 个人 Event 页内用户发布的待接单的 Event
                 resetEventStatusBtn.setText("修改");
                 resetEventStatusBtn.setOnClickListener(v -> sentUpdateEventIntent());
@@ -197,12 +198,27 @@ public class EventDetailActivity extends AppCompatActivity {
                         AlertDialogUtil.showAccepterSetEventDoneDialog(this, eid);
                     }
                 });
+                eventClientNameText.setOnClickListener(v -> {
+                    if (clientId != 0) {
+                        AlertDialogUtil.showDealerInfoDialog(this, clientId);
+                    }
+                });
+                eventAccepterNameText.setOnClickListener(v -> {
+                    if (accepterId != 0) {
+                        AlertDialogUtil.showDealerInfoDialog(this, accepterId);
+                    }
+                });
+                LogUtil.e("==UserID==", String.valueOf(userId));
+                LogUtil.e("==ClientID==", String.valueOf(clientId));
+                LogUtil.e("==AccepterID==", String.valueOf(accepterId));
             } else if (queryEventStatus.equals(EventStatusUtil.DONE)) {         // 个人 Event 页内当前用户发布的已完成的 Event
                 resetEventStatusBtn.setVisibility(View.GONE);
                 eventCommentView.setVisibility(View.VISIBLE);
+                eventAccepterNameText.setOnClickListener(v -> AlertDialogUtil.showDealerInfoDialog(this, accepterId));
             } else if (queryEventStatus.equals(EventStatusUtil.ANYONE_SET_DONE)) {    // 个人 Event 页内当前用户接受的已完成的 Event
                 resetEventStatusBtn.setVisibility(View.GONE);
                 eventCommentView.setVisibility(View.VISIBLE);
+                eventClientNameText.setOnClickListener(v -> AlertDialogUtil.showDealerInfoDialog(this, clientId));
             } else if (queryEventStatus.equals(EventStatusUtil.PENDING_APPROVAL)) {      // 个人 Event 页内待审核的 Event
                 resetEventStatusBtn.setText("修改");
                 resetEventStatusBtn.setOnClickListener(v -> sentUpdateEventIntent());

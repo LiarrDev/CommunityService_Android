@@ -4,22 +4,22 @@
         <item
             android:id="@+id/nav_me"
             android:icon="@drawable/ic_user"
-            android:title="Me" />
+            android:title="个人信息" />
         <item
             android:id="@+id/nav_location"
             android:icon="@drawable/ic_location"
-            android:title="Location" />
+            android:title="地区" />
         <item
             android:id="@+id/nav_event"
             android:icon="@drawable/ic_event"
-            android:title="Event" />
+            android:title="个人相关服务" />
         <item
             android:id="@+id/nav_sign_out"
             android:icon="@drawable/ic_sign_out"
-            android:title="Sign Out" />
+            android:title="退出登录" />
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_about"
-            android:title="About" />
+            android:title="关于" />
     </group>
 </menu>

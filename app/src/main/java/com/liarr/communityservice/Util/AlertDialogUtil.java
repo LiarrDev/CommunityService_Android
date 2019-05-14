@@ -8,12 +8,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatRatingBar;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
+import com.liarr.communityservice.Database.User;
 import com.liarr.communityservice.R;
 import com.liarr.communityservice.View.Activity.SignInActivity;
 
@@ -21,6 +23,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -283,6 +287,66 @@ public class AlertDialogUtil {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
+
+    /**
+     * 展示交易方信息的 Dialog
+     *
+     * @param context Dialog 所在 Activity
+     * @param uid     交易方的 User ID
+     */
+    public static void showDealerInfoDialog(Context context, int uid) {
+        Activity activity = (Activity) context;
+        View dialogView = activity.getLayoutInflater().inflate(R.layout.dialog_dealer_info, null);
+        AppCompatTextView dealerNameText = dialogView.findViewById(R.id.dealer_name_text);
+        AppCompatTextView dealerTelText = dialogView.findViewById(R.id.dealer_tel_text);
+        AppCompatTextView dealerDoneEventNumText = dialogView.findViewById(R.id.dealer_done_event_num_text);
+        AppCompatRatingBar ratingBar = dialogView.findViewById(R.id.dealer_stars_view);
+        AlertDialogUtil.showProgressDialog(context);
+        new Thread(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient();
+                RequestBody requestBody = new FormBody.Builder()
+                        .add("uid", String.valueOf(uid))
+                        .build();
+                Request request = new Request.Builder()
+                        .url(HttpRequestUrlUtil.userInfoUrl)
+                        .post(requestBody)
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        activity.runOnUiThread(() -> {
+                            AlertDialogUtil.dismissProgressDialog();
+                            Toast.makeText(context, "加载失败", Toast.LENGTH_LONG).show();
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        String responseContent = response.body().string();
+                        LogUtil.e("==DealerInfo==", responseContent);
+                        User dealer = ParseJsonUtil.parseDealerInfoJson(responseContent);
+                        dealerNameText.setText(dealer.getUserName());
+                        dealerTelText.setText(dealer.getTel());
+                        dealerDoneEventNumText.setText(String.valueOf(dealer.getDoneNum()));
+                        ratingBar.setRating(dealer.getPoint() / 2);
+
+                        activity.runOnUiThread(() -> {
+                            AlertDialogUtil.dismissProgressDialog();
+                            new AlertDialog.Builder(context, R.style.AlertDialogTheme)
+                                    .setTitle(R.string.app_name)
+                                    .setView(dialogView)
+                                    .setPositiveButton("Close", null)
+                                    .show();
+                        });
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
 
     /**
      * 用于提示信息的 Dialog

@@ -102,7 +102,6 @@ public class RegisterEventActivity extends AppCompatActivity {
         day = calendar.get(Calendar.DAY_OF_MONTH);
         calendar.set(year, month, day);
 
-        // TODO: 把所有文件的 ACTION 从 extra 改成 setAction
         if (action.equals("update_event")) {
             eid = getIntent().getIntExtra("eid", -1);
             eventChannel = getIntent().getStringExtra("category");

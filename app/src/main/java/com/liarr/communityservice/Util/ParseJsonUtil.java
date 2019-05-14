@@ -8,6 +8,7 @@ import com.liarr.communityservice.Database.City;
 import com.liarr.communityservice.Database.County;
 import com.liarr.communityservice.Database.Event;
 import com.liarr.communityservice.Database.Province;
+import com.liarr.communityservice.Database.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -263,4 +264,29 @@ public class ParseJsonUtil {
         }
         return event;
     }
+
+    /**
+     * 解析交易方的信息并返回用户对象
+     *
+     * @param json 服务器返回的 JSON
+     * @return 用户对象
+     */
+    public static User parseDealerInfoJson(String json) {
+        User user = null;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            String userJson = jsonObject.getString("user");
+            JSONObject userJsonObject = new JSONObject(userJson);
+            int uid = userJsonObject.getInt("uid");
+            String userName = userJsonObject.getString("userName");
+            String tel = userJsonObject.getString("tel");
+            int doneNum = userJsonObject.getInt("doneNum");
+            float point = (float) userJsonObject.getDouble("point");
+            user = new User(uid, userName, tel, doneNum, point);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
 }

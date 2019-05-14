@@ -14,7 +14,7 @@ public class EventStatusUtil {
 
     public static String ACCEPTER_SET_DONE = String.valueOf(5);    // Event 接单人点击完成
 
-    public static String PUBLISHED_BUT_NOT_ACCEPTED = String.valueOf(6);       // 自己发布但未被接单但 Event
+    public static String PUBLISHED_BUT_NOT_ACCEPTED = String.valueOf(6);       // 自己发布但未被接单的 Event
 
     public static String ANYONE_SET_DONE = String.valueOf(7);       // Event 的任意一方设置完成
 

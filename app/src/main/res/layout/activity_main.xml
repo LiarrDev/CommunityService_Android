@@ -60,7 +60,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Nursing" />
+                                android:text="医护" />
                         </LinearLayout>
 
                         <!-- 跑腿 -->
@@ -81,7 +81,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Legwork" />
+                                android:text="跑腿" />
                         </LinearLayout>
 
                         <!-- 清洁 -->
@@ -102,7 +102,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Cleaning" />
+                                android:text="清洁" />
                         </LinearLayout>
 
                         <!-- 教育 -->
@@ -123,7 +123,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Education" />
+                                android:text="教育" />
                         </LinearLayout>
 
                         <!-- 餐饮 -->
@@ -144,7 +144,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Repast" />
+                                android:text="餐饮" />
                         </LinearLayout>
 
                         <!-- 维修 -->
@@ -165,7 +165,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Repair" />
+                                android:text="维修" />
                         </LinearLayout>
                     </GridLayout>
 
